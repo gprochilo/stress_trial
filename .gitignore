@@ -1,0 +1,39 @@
+# Ignore the following data files
+# Necessary because data cannot be publicly shared
+
+# Git ignore the following files:
+
+data/data_economy.csv
+data/data_long.csv
+data/feasibility.csv
+data/*.csv
+
+# Ignore the following output so that my results are not pushed to GitHub
+# Necessary for independent reproduction of results
+
+# Git ignore the following results output files
+
+results/descriptives/*.csv
+results/mixed_model_data/*.csv
+results/paired_data/*.csv
+results/precision_power/*.csv
+
+# Git ignore the following plot output files
+
+plots/mixed_model_plots/assump_plots/*.png
+plots/mixed_model_plots/assump_plots/*.eps
+plots/mixed_model_plots/mixed_model_res/*.png
+plots/mixed_model_plots/mixed_model_res/*.eps
+plots/pair_diff_plots/*.png
+plots/pair_diff_plots/*.eps
+plots/pair_plots/*.png
+plots/pair_plots/*.eps
+plots/precision_power/*.png
+plots/precision_power/*.eps
+
+# Other
+
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata

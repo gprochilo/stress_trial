@@ -1,0 +1,474 @@
+---
+title: "The Effects of a 16-week Aerobic Exercise and Mindfulness-based Intervention on Chronic Psychosocial Stress: A Nonrandomized Pilot and Feasibility Trial"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+author: "Guy A. Prochilo"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This R Markdown document reproduces the results found in the above manuscript and provides instructions for independent reproduction. 
+
+_Note_: data from the original publication are not publicly available on the advice of the Monash University Human Research Ethics Committee. This is because the approved ethics application did not include provisions for public access to data. The deidentified data are available from the corresponding author, upon a reasonable request. 
+
+# Licence
+
+* The script files used in this analysis are licenced under MIT License
+
+```{r eval=TRUE}
+writeLines(readLines("LICENSE"))
+```
+
+# Instructions
+
+Follow these instructions to independently reproduce all analyses in the above publication via an R Markdown file.
+
+1. Install requisite software:
+
+* R (v-3.5.1)
+* R Studio (v-1.1.463)
+
+_Note_: These analyses were performed using using Windows 10 and have not been tested on Unix systems.
+
+2. Download the analysis pipeline:
+
+* Download or clone the git repository for this analysis: https://github.com/[repository_name_here]
+* The files within this repository must be saved to a single directory
+
+3. Open the R Studio project file:
+
+* Open `analysis.Rproj` to begin an R Studio session in your current working directory
+
+4. Install required packages:
+
+* This analysis pipeline requires the following packages:
+
+```{r eval=FALSE}
+install.packages("ggplot2")
+install.packages("MBESS")
+install.packages("scales")
+install.packages("HLMdiag")
+install.packages("userfriendlyscience")
+install.packages("lmerTest")
+install.packages("emmeans")
+install.packages("ggpubr")
+install.packages("boot")
+install.packages("pbapply")
+install.packages("here")
+install.packages("kableExtra")
+```
+
+5. Knit the R Markdown file to reproduce all analyses:
+
+* Open `markdown.rmd` in R Studio and select **Knit**
+* This action will reproduce this document and all associated analyses
+
+# Prepare R Workspace
+
+The scripts below are evaluated by R Markdown to reproduce all analyses.
+
+1. Load and attach required packages
+
+* R Markdown will load and attach the required packages by sourcing the `libraries.R` file
+* Robust statistical analysis scripts are sourced from the Rallfun-v35 script file
+  * Wilcox, R. R. (2018). Rallfun-v35. Retrieved from https://dornsife.usc.edu/labs/rwilcox/software/
+
+```{r results='hide', message=FALSE, warning=FALSE}
+source("libraries.R")
+source("Rallfun-v35.txt")
+```
+
+2. Import data
+
+* R Markdown will source the `import_data.R` script file
+* This file imports the one-_df_ and multi-_df_ data, and sorts it into a form required for analysis. This includes:
+  * Sorting the data into both long and wide format
+  * Defining variables classes
+  * Removing data with incomplete cases for the analysis of aerobic economy
+* This file also imports the results of an accuracy in parameter estimation sample size analysis which have been computed via simulation
+
+```{r eval=TRUE}
+source("import_data.R")
+```
+
+3. Source the analysis scripts
+
+* R Markdown will source the analysis script file for this project: `ProchFun_stress.R`
+* This file includes all scripts required for reproducing all analyses
+
+```{r eval=TRUE}
+source("ProcFun_stress-v1.R")
+```
+
+# Reproduce Results Tables
+
+## Table 1
+
+* Reproduce Table 1: Baseline demographic characteristics of participants
+* Use the following function:
+
+`bl.table()`
+
+```{r, eval=TRUE, echo=TRUE}
+bl.table() %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Table 2 
+
+* Reproduce Table 2: Summarized dosage results 
+* Use the the following function:
+
+`descrip.res(dv.list = dos.vars, df = "dat.wide", round = TRUE, sav2csv = TRUE, name = "baseline")`
+
+```{r, eval=TRUE, echo=TRUE}
+descrip.res(dv.list = dos.vars, df = "dat.wide", round = TRUE, sav2csv = TRUE, name = "baseline") %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+## Table 3
+
+* Reproduce Table 3: Summarized results for pre-test (T0), post-test (T1), and gains (T1-T0) for psychosocial stress factors, mindfulness, emotion regulation factors, and maximal aerobic capacity
+* Use the following function:
+
+`pair.table()`
+
+```{r, eval=TRUE}
+pair.table() %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Table 4
+
+* Reproduce Table 4: Summarized Type III ANOVA table and follow-up pairwise contrasts of the linear mixed model (fit by REML) for each aerobic economy outcome. F and t tests use Satterthwaite's degrees of freedom.
+* Use the following function:
+
+`lmm.table()`
+
+```{r, eval=TRUE}
+lmm.table() %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Table 5
+
+* Reproduce Table 5: Range of sample sizes required to estimate PSS-10 effects for a confirmatory RCT comparing aerobic exercise, mindfulness, combination training, and a control arm
+* Use the following function:
+
+`aipe.res(retention.rate = 0.7083, trial.reps = 10)`
+
+```{r, eval=TRUE}
+aipe.res(retention.rate = 0.7083, trial.reps = 10) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+# Reproduce In-text Statistics
+
+The following statistics are reported in the text of the main manuscript but outside of tables.
+
+## Critical _t_ and _d_ value for _N_ = 17
+
+* Reproduce calculation of the critical _t_ and _d_ values reported in the Methods section for justification of sample size
+* This function reports the critical _t_, critical _d_, confidence limits for critical _d_, the margin-of-error on critical _d_, and a summary of results
+
+```{r, eval=TRUE}
+critical.t(n = 17, type = "dz", alpha = 0.05, twotailed = TRUE)
+```
+
+## Common language effect size for PSS-10 gain scores
+
+* The common language effect size is computed with the following formula: `CL = 1 - pnorm(mu/sd.ch)`
+* It quantifies the chance that a participant picked at random at T1 will have a lower PSS-10 score than at T0
+* It is written into the `pair.test()` function which analyzes 1-_df_ effects
+
+```{r, eval=TRUE}
+pair.test(x = "pss", df.wide = "dat.wide", df.long = "dat.long", plotit = FALSE)$CL
+```
+
+## Sensitivity test for survivorship bias in PSS-10 gain score analyses
+
+* This test assigns a PSS-10 gain score of zero for seven participants and re-runs the 1-_df_ test analysis
+
+```{r, eval=TRUE}
+pair.test.sensitivity("pss", dropout.n = 7, df.wide = "dat.wide")$res
+```
+
+## Feasibility Rates
+* Reproduce the feasibility rates
+
+```{r, eval=TRUE, echo=TRUE}
+feasibility(give = "feas.rates")
+```
+
+## Safeguard effect size
+* Reproduce the safeguard effect size computation for PSS-10 gain scores
+
+```{r, eval=TRUE, echo=TRUE}
+safeguard.ES(dv = "pss", df = "dat.wide")
+```
+
+# Reproduce Supp. Results Tables
+
+## Supplementary Results Table 1
+
+* Reproduce Supplementary Results Table 1: Summarized results for gains (T1-T0) at multiple confidence limits for psychosocial stress factors, mindfulness, emotion regulation factors, and maximal aerobic capacity
+* Use the following function:
+
+`pair.supp()`
+
+```{r, eval=TRUE}
+pair.supp() %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Supplementary Results Table 2
+
+* Reproduce Supplementary Results Table 2: Summarized results for follow-up pairwise contrast gains (T1-T0) at multiple confidence limits for the fixed effect of time (absolute oxygen cost, relative oxygen cost, heart rate, and perceived exertion) and interaction (relative oxygen cost)
+* Use the following function:
+
+`supp.lmm()`
+
+```{r, eval=TRUE}
+supp.lmm() %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+
+## Supplementary Results Table 3
+
+* Reproduce Supplementary Results Table 3: Summarized results of the linear mixed model for absolute oxygen cost (OC)
+* Use the following function:
+
+`supp.model("vo2.dv")`
+
+```{r, eval=TRUE}
+res = supp.model("vo2.dv")
+
+res$delete %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$model %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$variance %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Supplementary Results Table 4
+
+* Reproduce Supplementary Results Table 4: Summarized results of the linear mixed model for relative oxygen cost (% VO2max) cost (OC)
+* Use the following function:
+
+`supp.model("pcnt.vo2.dv")`
+
+```{r, eval=TRUE}
+res = supp.model("pcnt.vo2.dv")
+
+res$delete %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$model %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$variance %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Supplementary Results Table 5
+
+* Reproduce Supplementary Results Table 5: Summarized results of the linear mixed model for heart rate (beats/min)
+* Use the following function:
+
+`supp.model("hr.dv")`
+
+```{r, eval=TRUE}
+res = supp.model("hr.dv")
+
+res$delete %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$model %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$variance %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Supplementary Results Table 6
+
+* Reproduce Supplementary Results Table 6: Summarized results of the linear mixed model for perceived exertion (RPE)
+* Use the following function:
+
+`supp.model("rpe.dv")`
+
+```{r, eval=TRUE}
+res = supp.model("rpe.dv")
+
+res$delete %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$model %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+res$variance %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+# Reproduce Figures
+
+## Figure 1
+
+* Figure 1 was produced in Adobe Illustrator
+* The data within this figure can be reproduced using the following function:
+
+```{r, eval=TRUE}
+feasibility(give = "participant.flow")
+```
+
+## Figure 2A/2B
+
+* Reproduce Figure 2A and 2B (PSS-10 scores)
+
+```{r, fig.width=8,fig.height=6, eval = TRUE}
+fig2AB = pair.test(x = "pss", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
+```
+
+## Figure 2C
+
+* Reproduce Figure 2C (MAAS scores)
+
+```{r, fig.width=8,fig.height=6, eval = TRUE}
+fig2C = pair.test(x = "maas", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
+```
+
+## Figure 2D
+
+* Reproduce Figure 2D (ERQ-CR scores)
+
+```{r, fig.width=8,fig.height=6, eval = TRUE}
+fig2D = pair.test(x = "erq.cr", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
+```
+
+## Figure 2E
+
+* Reproduce Figure 2E (VO2max scores)
+
+```{r, fig.width=6,fig.height=5, eval = TRUE}
+fig2E = pair.test(x = "vo2max", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
+```
+
+## Figure 3A
+
+* Reproduce Figure 3A: Dot plots of aerobic economy data across velocity and time for absolute oxygen cost (VO2 L/min)
+
+```{r, fig.width=7,fig.height=5, eval = TRUE}
+fig3A = emm.test(econ = "vo2.dv", df = "dat.econ.long", transf = "none", effect = "time")
+```
+
+## Figure 3B
+
+* Reproduce Figure 3B: Dot plots of aerobic economy data across velocity and time for relative oxygen cost (% VO2max) 
+
+```{r, fig.width=7,fig.height=5, eval = TRUE}
+fig3B = emm.test(econ = "pcnt.vo2.dv", df = "dat.econ.long", transf = "none", effect = "time")
+```
+
+## Figure 3C
+
+* Reproduce Figure 3C: Dot plots of aerobic economy data across velocity and time for heart rate
+
+```{r, fig.width=7,fig.height=5, eval = TRUE}
+fig3C = emm.test(econ = "hr.dv", df = "dat.econ.long", transf = "none", effect = "time")
+```
+
+## Figure 3D
+
+* Reproduce Figure 3D: Dot plots of aerobic economy data across velocity and time for perceived exertion (RPE)
+
+```{r, fig.width=7,fig.height=5, eval = TRUE}
+fig3D = emm.test(econ = "rpe.dv", df = "dat.econ.long", transf = "none", effect = "time")
+```
+
+## Figure 4
+
+* Reproduce Figure 4: Sample size curves for within-group changes in PSS-10 using the pilot estimation of effect size (dz) and a safeguard estimate of effect size (safeguard dz)
+
+```{r, fig.width=8,fig.height=6, eval = TRUE}
+precPLOT.pair()
+```
+
+## AIPE with assurance simulations
+
+* These simulations are not run in this markdown file because each can take hours at a time. 
+* To independently reproduce our AIPE with assurance results you may run each of the following functions (note: these results will be identical to those reported in the manuscript because a seed has been set):
+
+### dz = -0.60
+
+```{r, eval = FALSE}
+aipe.assurance(d = as.numeric(safeguard.ES(dv = "pss", df = "dat.wide")["est",][1]),
+               reps = 2000, 
+               n.seq = c(10,200,1),
+               effect = "dz", 
+               seed = TRUE)
+```
+
+### Safeguard dz = -0.37
+
+```{r, eval = FALSE}
+aipe.assurance(d = as.numeric(safeguard.ES(dv = "pss", df = "dat.wide")["0.8",][1]),
+               reps = 2000, 
+               n.seq = c(10,200,1),
+               effect = "dz",
+               seed = TRUE)
+```
+
+
+### Between-group effect sizes ds
+
+```{r, eval = FALSE}
+aipe.assurance(d = 0.8, reps = 2000, n.seq = c(10,900,1), effect = "ds", seed = TRUE)
+aipe.assurance(d = 0.7, reps = 2000, n.seq = c(10,900,1), effect = "ds", seed = TRUE)
+aipe.assurance(d = 0.6, reps = 2000, n.seq = c(10,900,1), effect = "ds", seed = TRUE)
+aipe.assurance(d = 0.5, reps = 2000, n.seq = c(10,900,1), effect = "ds", seed = TRUE)
+aipe.assurance(d = 0.4, reps = 2000, n.seq = c(10,900,1), effect = "ds", seed = TRUE)
+aipe.assurance(d = 0.3, reps = 2000, n.seq = c(10,900,1), effect = "ds", seed = TRUE)
+aipe.assurance(d = 0.2, reps = 2000, n.seq = c(10,900,1), effect = "ds", seed = TRUE)
+```
+
+
+
+
+
+
+
