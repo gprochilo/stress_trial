@@ -1,7 +1,7 @@
 <!-- rmarkdown v1 -->
 
 
-[![Last-changedate](https://img.shields.io/badge/last%20change-2019--04--21-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2019--04--25-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.5.1-brightgreen.svg)](https://cran.r-project.org/)
 
 ## Research compendium for: The Effects of a 16-week Aerobic Exercise and Mindfulness-based Intervention on Chronic Psychosocial Stress: A Nonrandomized Pilot and Feasibility Trial.
@@ -30,6 +30,7 @@
 
 * The `markdown.rmd` file contains details of how each analysis reported in the paper was conducted, and instructions on how to reproduce the results of all analyses (including all tables and figures)
 * The HTML version of these instructions is hosted at: http://gprochilo.github.io/stress_trial
+* Alternatively, a PDF version is available in the repository path: `docs/index.pdf`
 
 ### Dependencies
 * These results were generated on Windows 10  using R Studio (Version 1.1.463) and R (Version 3.5.1)

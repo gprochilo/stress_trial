@@ -36,6 +36,7 @@ knitr::opts_chunk$set(
 
 * The `markdown.rmd` file contains details of how each analysis reported in the paper was conducted, and instructions on how to reproduce the results of all analyses (including all tables and figures)
 * The HTML version of these instructions is hosted at: http://gprochilo.github.io/stress_trial
+* Alternatively, a PDF version is available in the repository path: `docs/index.pdf`
 
 ### Dependencies
 * These results were generated on Windows 10  using R Studio (Version 1.1.463) and R (Version 3.5.1)
