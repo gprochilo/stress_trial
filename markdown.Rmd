@@ -22,35 +22,27 @@ This R Markdown document reproduces the results found in the above manuscript an
 
 _Note_: data from the original publication are not publicly available on the advice of the Monash University Human Research Ethics Committee. This is because the approved ethics application did not include provisions for public access to data. The deidentified data are available from the corresponding author, upon a reasonable request. 
 
-# Licence
-
-* The script files used in this analysis are licenced under MIT License
-
-```{r eval=TRUE}
-writeLines(readLines("LICENSE"))
-```
-
 # Instructions
 
 Follow these instructions to independently reproduce all analyses in the above publication via an R Markdown file.
 
-1. Install requisite software:
+**1. Install requisite software:**
 
 * R (v-3.5.1)
 * R Studio (v-1.1.463)
 
 _Note_: These analyses were performed using using Windows 10 and have not been tested on Unix systems.
 
-2. Download the analysis pipeline:
+**2. Download the analysis pipeline:**
 
 * Download or clone the git repository for this analysis: https://github.com/[repository_name_here]
 * The files within this repository must be saved to a single directory
 
-3. Open the R Studio project file:
+**3. Open the R Studio project file:**
 
 * Open `analysis.Rproj` to begin an R Studio session in your current working directory
 
-4. Install required packages:
+**4. Install required packages:**
 
 * This analysis pipeline requires the following packages:
 
@@ -69,7 +61,7 @@ install.packages("here")
 install.packages("kableExtra")
 ```
 
-5. Knit the R Markdown file to reproduce all analyses:
+**5. Knit the R Markdown file to reproduce all analyses:**
 
 * Open `markdown.rmd` in R Studio and select **Knit**
 * This action will reproduce this document and all associated analyses
@@ -78,7 +70,7 @@ install.packages("kableExtra")
 
 The scripts below are evaluated by R Markdown to reproduce all analyses.
 
-1. Load and attach required packages
+**1. Load and attach required packages**
 
 * R Markdown will load and attach the required packages by sourcing the `libraries.R` file
 * Robust statistical analysis scripts are sourced from the Rallfun-v35 script file
@@ -89,7 +81,7 @@ source("libraries.R")
 source("Rallfun-v35.txt")
 ```
 
-2. Import data
+**2. Import data**
 
 * R Markdown will source the `import_data.R` script file
 * This file imports the one-_df_ and multi-_df_ data, and sorts it into a form required for analysis. This includes:
@@ -102,9 +94,9 @@ source("Rallfun-v35.txt")
 source("import_data.R")
 ```
 
-3. Source the analysis scripts
+**3. Source the analysis scripts**
 
-* R Markdown will source the analysis script file for this project: `ProchFun_stress.R`
+* R Markdown will source the analysis script file for this project: `ProchFun_stress-v1.R`
 * This file includes all scripts required for reproducing all analyses
 
 ```{r eval=TRUE}
@@ -360,7 +352,7 @@ feasibility(give = "participant.flow")
 
 * Reproduce Figure 2A and 2B (PSS-10 scores)
 
-```{r, fig.width=8,fig.height=6, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig2AB = pair.test(x = "pss", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
 ```
 
@@ -368,7 +360,7 @@ fig2AB = pair.test(x = "pss", df.wide = "dat.wide", df.long = "dat.long", plotit
 
 * Reproduce Figure 2C (MAAS scores)
 
-```{r, fig.width=8,fig.height=6, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig2C = pair.test(x = "maas", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
 ```
 
@@ -376,7 +368,7 @@ fig2C = pair.test(x = "maas", df.wide = "dat.wide", df.long = "dat.long", plotit
 
 * Reproduce Figure 2D (ERQ-CR scores)
 
-```{r, fig.width=8,fig.height=6, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig2D = pair.test(x = "erq.cr", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
 ```
 
@@ -384,7 +376,7 @@ fig2D = pair.test(x = "erq.cr", df.wide = "dat.wide", df.long = "dat.long", plot
 
 * Reproduce Figure 2E (VO2max scores)
 
-```{r, fig.width=6,fig.height=5, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig2E = pair.test(x = "vo2max", df.wide = "dat.wide", df.long = "dat.long", plotit = TRUE)
 ```
 
@@ -392,7 +384,7 @@ fig2E = pair.test(x = "vo2max", df.wide = "dat.wide", df.long = "dat.long", plot
 
 * Reproduce Figure 3A: Dot plots of aerobic economy data across velocity and time for absolute oxygen cost (VO2 L/min)
 
-```{r, fig.width=7,fig.height=5, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig3A = emm.test(econ = "vo2.dv", df = "dat.econ.long", transf = "none", effect = "time")
 ```
 
@@ -400,7 +392,7 @@ fig3A = emm.test(econ = "vo2.dv", df = "dat.econ.long", transf = "none", effect 
 
 * Reproduce Figure 3B: Dot plots of aerobic economy data across velocity and time for relative oxygen cost (% VO2max) 
 
-```{r, fig.width=7,fig.height=5, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig3B = emm.test(econ = "pcnt.vo2.dv", df = "dat.econ.long", transf = "none", effect = "time")
 ```
 
@@ -408,7 +400,7 @@ fig3B = emm.test(econ = "pcnt.vo2.dv", df = "dat.econ.long", transf = "none", ef
 
 * Reproduce Figure 3C: Dot plots of aerobic economy data across velocity and time for heart rate
 
-```{r, fig.width=7,fig.height=5, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig3C = emm.test(econ = "hr.dv", df = "dat.econ.long", transf = "none", effect = "time")
 ```
 
@@ -416,7 +408,7 @@ fig3C = emm.test(econ = "hr.dv", df = "dat.econ.long", transf = "none", effect =
 
 * Reproduce Figure 3D: Dot plots of aerobic economy data across velocity and time for perceived exertion (RPE)
 
-```{r, fig.width=7,fig.height=5, eval = TRUE}
+```{r, out.width='100%',fig.height=5, eval = TRUE}
 fig3D = emm.test(econ = "rpe.dv", df = "dat.econ.long", transf = "none", effect = "time")
 ```
 
@@ -424,7 +416,7 @@ fig3D = emm.test(econ = "rpe.dv", df = "dat.econ.long", transf = "none", effect 
 
 * Reproduce Figure 4: Sample size curves for within-group changes in PSS-10 using the pilot estimation of effect size (dz) and a safeguard estimate of effect size (safeguard dz)
 
-```{r, fig.width=8,fig.height=6, eval = TRUE}
+```{r, out.width='100%',fig.height=6, eval = TRUE}
 precPLOT.pair()
 ```
 

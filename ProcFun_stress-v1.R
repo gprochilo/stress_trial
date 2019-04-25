@@ -10,7 +10,7 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #   
-# The above copyright notice and this permission notice shall be included in all
+#   The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
 # 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -28,8 +28,15 @@
 # Last update: April 2019
 # 
 # Cite as:
-# Prochilo, G. A. (2019). ProcFun_stress-v1: R functions for stress trial mansuscript. 
+# Prochilo, G. A. (2019). ProcFun_stress-v1: R functions for stress trial mansuscript.
 # Retrieved from https://github.com/gprochilo
+
+#-------------------------------------------------------------------------------
+
+# Print the above license whenever ProcFun_stress-v1.R is sourced
+# If the license exceeds 32 lines in future, update 32 to a higher number
+
+writeLines(readLines("ProcFun_stress-v1.R",32))
 
 #-------------------------------------------------------------------------------
 # Begin scripts
