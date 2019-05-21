@@ -32,7 +32,7 @@ lmm.table()
 
 # Table 5
 
-aipe.res(retention.rate = 0.7083, trial.reps = 10)
+aipe.res(retention.rate = 0.7083, trial.reps = 10, assurance = 0.99)
 
 #-------------------------------------------------------------------------------
 

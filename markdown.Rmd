@@ -166,7 +166,7 @@ lmm.table() %>%
 `aipe.res(retention.rate = 0.7083, trial.reps = 10)`
 
 ```{r, eval=TRUE}
-aipe.res(retention.rate = 0.7083, trial.reps = 10) %>%
+aipe.res(retention.rate = 0.7083, trial.reps = 10, assurance = 0.99) %>%
   kable() %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```

@@ -10,7 +10,7 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #   
-#   The above copyright notice and this permission notice shall be included in all
+# The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
 # 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -2252,7 +2252,7 @@ precPLOT.pair <- function(pr = TRUE){
 
 #-------------------------------------------------------------------------------
 
-aipe.res <- function(retention.rate = 0.7083, trial.reps = 10){
+aipe.res <- function(retention.rate = 0.7083, trial.reps = 10, assurance = 0.99, sav2csv = TRUE){
   
 ################################################################################ 
 # This function reproduces Table 5
@@ -2263,7 +2263,7 @@ aipe.res <- function(retention.rate = 0.7083, trial.reps = 10){
   
   find.n <- function(i){
     
-    rank = which(i$power == 1)[1]
+    rank = which.min(abs(i$power-assurance))
     n = i$n[rank]
     adj.n = n/retention.rate
     
@@ -2298,10 +2298,24 @@ aipe.res <- function(retention.rate = 0.7083, trial.reps = 10){
   )
   
   res = cbind(moe, res, required.n)
-  res = as.data.frame(res)
   colnames(res) = c("MoE", "N", "N Adjusted","Recruitment Rate")
   
-  return(res)
+  if(sav2csv == TRUE){
+    
+    temp = res
+    temp = cbind(rownames(temp),temp)
+    colnames(temp)[1] = "d"
+
+    write.table(temp,
+                file = here("results","precision_power","table_5.csv"),
+                append = F,
+                row.names = F,
+                col.names = T,
+                sep=",")
+    
+  }
+  
+  return(as.data.frame(res))
   
 }
 
