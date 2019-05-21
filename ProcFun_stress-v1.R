@@ -26,7 +26,7 @@
 # Email: guy.prochilo@gmail.com
 # 
 # Last update: May 2019
-# 
+#
 # Cite as:
 # Prochilo, G. A. (2019). ProcFun_stress-v1: R functions for stress trial mansuscript.
 # Retrieved from https://github.com/gprochilo
