@@ -28,7 +28,7 @@ pair.table()
 
 # Table 4
 
-lmm.table()
+lmm.table() 
 
 # Table 5
 
