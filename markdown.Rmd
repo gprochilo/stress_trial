@@ -181,7 +181,7 @@ The following statistics are reported in the text of the main manuscript but out
 * This function reports the critical _t_, critical _d_, confidence limits for critical _d_, the margin-of-error on critical _d_, and a summary of results
 
 ```{r, eval=TRUE}
-critical.t(n = 17, type = "dz", alpha = 0.05, twotailed = TRUE)
+critical.t(n = 17, type = "dz", alpha = 0.2, twotailed = TRUE)
 ```
 
 ## Common language effect size for PSS-10 gain scores

@@ -40,7 +40,7 @@ aipe.res(retention.rate = 0.7083, trial.reps = 10, assurance = 0.99)
 
 # Critical t and d values 
 
-critical.t(n = 17, type = "dz", alpha = 0.05, twotailed = TRUE)
+critical.t(n = 17, type = "dz", alpha = 0.2, twotailed = TRUE)
 
 # Common language effect size for PSS-10 gain scores
 
