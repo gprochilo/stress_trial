@@ -13,10 +13,11 @@ data/*.csv
 
 # Git ignore the following results output files
 
-results/descriptives/*.csv
+results/feasibility/feasibility_rates.txt
+results/feasibility/flow.txt
 results/mixed_model_data/*.csv
 results/paired_data/*.csv
-results/precision_power/*.csv
+results/tables/*.csv
 
 # Git ignore the following plot output files
 
@@ -28,8 +29,6 @@ plots/pair_diff_plots/*.png
 plots/pair_diff_plots/*.eps
 plots/pair_plots/*.png
 plots/pair_plots/*.eps
-plots/precision_power/*.png
-plots/precision_power/*.eps
 
 # Other
 

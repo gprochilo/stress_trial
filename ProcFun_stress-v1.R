@@ -1,71 +1,54 @@
-# MIT License
-# 
-# ProcFun_stress-v1: R functions for stress trial mansuscript.
-# Copyright (c) 2019 Guy A. Prochilo
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#   
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-# 
-# Contact
-# Name: Guy A. Prochilo
-# Email: guy.prochilo@gmail.com
-# 
-# Last update: May 2019
+#     GNU General Public License v3.0
 #
-# Cite as:
-# Prochilo, G. A. (2019). ProcFun_stress-v1: R functions for stress trial mansuscript.
-# Retrieved from https://github.com/gprochilo
+#     ProcFun_stress-v1: R functions for stress trial mansuscript.
+#     Copyright (C) 2019  Guy A. Prochilo
+# 
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# 
+#     Contact
+#     Name: Guy A. Prochilo
+#     Email: guy.prochilo@gmail.com
+# 
+#     Last update: June 2019
+#
+#     Cite as:
+#     Prochilo, G. A. (2019). ProcFun_stress-v1: R functions for stress trial 
+#     mansuscript.
+#     Retrieved from https://github.com/gprochilo
 
 #-------------------------------------------------------------------------------
 
-# Print the above license whenever ProcFun_stress-v1.R is sourced
-# If the license exceeds 32 lines in future, update 32 to a higher number
-
-writeLines(readLines("ProcFun_stress-v1.R",32))
-
-#-------------------------------------------------------------------------------
-# Begin scripts
-#-------------------------------------------------------------------------------
-
-################################################################################
-# Define a vector with dosage variable names
-################################################################################
-
-dos.vars <- cbind("attendance.pcnt.1",
-                  "meditation.tot.1",
-                  "runs.tot.1",
-                  "mean.pcnt.vo2max.1",
-                  "distance.km.tot.1",
-                  "runtime.tot.1"
-)
+  # Print the above license whenever ProcFun_stress-v1.R is sourced
+  # If the license exceeds 32 lines in future, update 32 to a higher number
+  
+  writeLines(readLines("ProcFun_stress-v1.R",28))
 
 #-------------------------------------------------------------------------------
 
 quiet <- function(x){ 
 
-################################################################################
-# This function suppresses print output of a function
-# Retrieved from: http://r.789695.n4.nabble.com/Suppressing-output-e-g-from-cat-td859876.html
-#
-# Example use:
-# res = quiet(ci.sm(sm = 0.5, N = 50))
-################################################################################
-  
+  # This function suppresses the print output of functions that do not provide
+  # the option to turn off print output 
+  #
+  # x: script for which you would like to suppress print output
+  #
+  # Examples:
+  # Suppress the output of the MBESS::ci.sm function
+  # quiet(MBESS::ci.sm(sm = 0.5, N = 50))
+  #
+  # Begin script
+
   sink(tempfile()) 
   on.exit(sink()) 
   invisible(force(x)) 
@@ -73,24 +56,23 @@ quiet <- function(x){
 
 #-------------------------------------------------------------------------------
 
-feasibility <- function(give = "participant.flow"){
+feasibility <- function(values = c("f.rates","flow")){
 
-################################################################################
-# This function returns the Participant Flow chart data and feasibility rates
-#
-# Example use:
-# feasibility(give = "feas.rates")
-# feasibility(give = "participant.flow")
-################################################################################
+  # This function returns the feasibility rate and participant flow data
+  #
+  # values: Character string specifying whether the return feasibility rates 
+  # ('f.rates') or participant flow ('flow').
+  #
+  # Examples:
+  # Compute and report participant flow data
+  # feasibility(values = "flow")
+  #
+  # Begin script
   
   # Define a frequencies function to return frequencies of reasons
-
-  # freq() is part of the userfriendlyscience package:
-  # Peters, G. Y. (2018). userfriendlyscience: Quantitative analysis made accessible. R package
-  # version 0.7.2. Retrieved from https://CRAN.R-project.org/package=userfriendlyscience
   
   freqs <- function(i){
-    res = freq(i)
+    res = userfriendlyscience::freq(i)
     
     res = as.data.frame(
       cbind(res$intermediate$categoryNames,
@@ -108,31 +90,31 @@ feasibility <- function(give = "participant.flow"){
     
   }
   
-  # Compute n for each stage of the participant flow
+  # Compute the number of observations for each stage of the participant flow
   
   # Enrolment
   n.applied = length(feas$id)
-  n.ineligible = sum(na.omit(feas$ineligible == 1))
+  n.ineligible = sum(stats::na.omit(feas$ineligible == 1))
   n.eligible = n.applied-n.ineligible
-  reason.ineligible = freqs(na.omit(feas$why.ineligible))
-  n.declined = sum(na.omit(feas$they.declined == 1))
+  reason.ineligible = freqs(stats::na.omit(feas$why.ineligible))
+  n.declined = sum(stats::na.omit(feas$they.declined == 1))
   
   # Assignment and allocation
-  n.nonrandomized = sum(na.omit(feas$not.nonrandomized == 0))
+  n.nonrandomized = sum(stats::na.omit(feas$not.nonrandomized == 0))
   
   # Follow-up
-  n.completed = sum(na.omit(feas$dropout == 0))
-  n.dropout = sum(na.omit(feas$dropout == 1))
-  reason.dropout = freqs(na.omit(feas$why.dropout))
+  n.completed = sum(stats::na.omit(feas$dropout == 0))
+  n.dropout = sum(stats::na.omit(feas$dropout == 1))
+  reason.dropout = freqs(stats::na.omit(feas$why.dropout))
   
   # Analysis
-  n.quest = sum(na.omit(feas$missed.quest.t1 == 0))
-  n.vo2max = sum(na.omit(feas$missed.vo2max.t1 == 0))
-  n.economy.6km = sum(na.omit(feas$max.velocity >= 6))
-  n.economy.8km = sum(na.omit(feas$max.velocity >= 8))
-  n.economy.10km = sum(na.omit(feas$max.velocity >= 10))
-  n.economy.12km = sum(na.omit(feas$max.velocity >= 12))
-  n.economy.14km = sum(na.omit(feas$max.velocity >= 14))
+  n.quest = sum(stats::na.omit(feas$missed.quest.t1 == 0))
+  n.vo2max = sum(stats::na.omit(feas$missed.vo2max.t1 == 0))
+  n.economy.6km = sum(stats::na.omit(feas$max.velocity >= 6))
+  n.economy.8km = sum(stats::na.omit(feas$max.velocity >= 8))
+  n.economy.10km = sum(stats::na.omit(feas$max.velocity >= 10))
+  n.economy.12km = sum(stats::na.omit(feas$max.velocity >= 12))
+  n.economy.14km = sum(stats::na.omit(feas$max.velocity >= 14))
     
   # Compute feasibility rates
   
@@ -148,11 +130,11 @@ feasibility <- function(give = "participant.flow"){
   recruitment.rate = (n.nonrandomized/n.applied)*100
   elig.rate = (1-(n.ineligible)/n.applied)*100
   
-  # Return the following values if have selected the Participant Flow data  
+  # Return the following values give = "participant.flow" 
 
-  if(give == "participant.flow"){
+  if(values == "flow"){
   
-  return(list(
+  res = list(
     "Assessed for eligibility" = n.applied,
     "Excluded" = n.applied-n.nonrandomized,
     "Not meeting inclusion criteria" = n.ineligible,
@@ -171,14 +153,19 @@ feasibility <- function(give = "participant.flow"){
     "N excluded (economy)" = n.completed-n.economy.12km,
     "N excluded (economy) reason" = paste(n.completed-n.economy.12km,
                                           "did not attain a steady-state velocity across all of 6, 7, 10, and 12 km/h")
-  ))
+  )
+  
+  sink(file = here::here("results","feasibility","flow.txt"))
+  print(res)
+  sink()
+  
   }
 
-  # Return the following values if have selected the Feasibility rates data   
+  # Return the following values if give = "feas.rates"  
   
-  if(give == "feas.rates"){
+  if(values == "f.rates"){
     
-    return(list(
+    res = list(
     "Retention Rate" = cbind(n.nonrandomized,n.completed,retention.rate),
     "Dropout Rate" = cbind(n.nonrandomized,n.dropout,dropout.rate),
     "Questionnaire response rate" = cbind(n.quest,response.rate.quest),
@@ -191,816 +178,1003 @@ feasibility <- function(give = "participant.flow"){
     "Recruitment Rate" = cbind(n.applied,n.nonrandomized,recruitment.rate),
     "Eligibility inclusion rate" = cbind(n.applied,n.eligible,elig.rate),
     "Primary reasons for ineligibility" = reason.ineligible[1:3,]
-    ))
-  }
-  
-}
-
-#-------------------------------------------------------------------------------
-
-critical.t <- function(n,
-                       type = c("dz","ds"),
-                       alpha = .05, 
-                       twotailed = TRUE){
-
-################################################################################
-# This function computes critical t and d values for a paired sample (dz) or
-# unpaired two-sample (ds) t test. Also returns confidence limits on critical d
-# and the margin-of-error (MoE) on that d value.
-#
-# Example use:
-# critical.t(n = 17, type = "dz", alpha = 0.05, twotailed = TRUE)
-################################################################################
-  
-  # Define parameters based on function input
-  
-  if(twotailed==TRUE){tail=2}
-  if(twotailed!=TRUE){tail=1}
-  if(type == "dz"){df = n-1}
-  if(type == "ds"){df = n-2}
-  
-  # Compute the critical t value
-  
-  t.crit <- qt(1-(alpha/tail), df)
-  
-  # Compute the critical d value for a paired design and MoE
-  
-  # ci.sm is part of the MBESS package:
-  # Kelley, K. (2018). MBESS: The MBESS R Package. R package version 4.4.3. 
-  # Retrieved from https://CRAN.R-project.org/package=MBESS
-  
-  if(type == "dz"){
-    d.crit = t.crit/sqrt(n)
-    d.ci = quiet(ci.sm(sm = d.crit, N = n))
-    d.ci.LL = d.ci$Lower.Conf.Limit.Standardized.Mean
-    d.ci.UL = d.ci$Upper.Conf.Limit.Standardized.Mean
-    MoE = (d.ci.UL-d.ci.LL)/2
-    res = sprintf("t(%.f) = %.2f, p = %.3f, d = %.2f, 95%% CI [%.2f, %.2f]",
-                  df,
-                  t.crit,
-                  alpha,
-                  d.crit,
-                  d.ci.LL,
-                  d.ci.UL)
+    )
+    
+    sink(file = here::here("results","feasibility","feasibility_rates.txt"))
+    print(res)
+    sink()
     
   }
   
-  # Compute the critical d value for a two sample design and MoE
+  return(res)
   
-  # ci.smd is part of the MBESS package
-  # Kelley, K. (2018). MBESS: The MBESS R Package. R package version 4.4.3. 
-  # Retrieved from https://CRAN.R-project.org/package=MBESS
-  
-  if(type == "ds"){
-    d.crit = (2*t.crit)/sqrt(df)
-    d.ci = quiet(ci.smd(smd = d.crit, n.1 = n/2, n.2 = n/2))
-    d.ci.LL = d.ci$Lower.Conf.Limit.smd
-    d.ci.UL = d.ci$Upper.Conf.Limit.smd
-    MoE = (d.ci.UL-d.ci.LL)/2
-    res = sprintf("t(%.f) = %.2f, p = %.3f, d = %.2f, 95%% CI [%.2f, %.2f]",
-                  df,
-                  t.crit,
-                  alpha,
-                  d.crit,
-                  d.ci.LL,
-                  d.ci.UL)
-    }
-
-  return(list(t.crit = t.crit, 
-              d.crit = d.crit,
-              d.ci.LL = round(d.ci.LL,2),
-              d.ci.UL = round(d.ci.UL,2),
-              MoE = MoE,
-              res = res))
 }
 
 #-------------------------------------------------------------------------------
 
-################################################################################
-# Defines a vector of baseline demographic variable names
-################################################################################
+crit.vals <- function(n,
+                      type = c("paired","two.sample"),
+                      alpha = .05,
+                      silent = FALSE){
+  
+  # This function computes the critical t and d values for a paired sample or 
+  # an unpaired two sample t test. It also returns confidence limits on the 
+  # critical d value and the margin-of-error (moe) on d. 
+  #
+  # n: Total sample size
+  # type: Character string specifying whether to return values for a paired 
+  # sample ('paired') or unpaired sample ('two.sample') t test. 
+  # alpha: maximum Type I error rate
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Examples:
+  # Compute the critical t and d values for a paired-sample test
+  # crit.vals(n = 17, type = "paired")
+  #
+  # Begin script
+  
+  # Define degrees of freedom for the specified test
+  
+  if(type == "paired"){df = n-1}
+  if(type == "two.sample"){df = n-2}
+  
+  # Compute the critical t value
+  
+  t.crit <- qt(1-(alpha/2), df)
+  
+  # If type = "paired" perform the following computations
+  
+  if(type == "paired"){
+    d.crit = t.crit/sqrt(n)
+    ci = as.numeric(
+      quiet(MBESS::ci.sm(sm = d.crit, N = n)[c(1,3)])
+    )
+    moe = (ci[2]-ci[1])/2
+    
+    res.d = sprintf("d.crit = %.2f, %.0f%% CI [%.2f, %.2f], MoE = %.2f",
+                  d.crit,
+                  (1-alpha)*100,
+                  ci[1],
+                  ci[2],
+                  moe)
+    
+    res.t = sprintf("t.crit(%.0f) = %.2f, p.crit = %.3f",
+                    df,
+                    t.crit,
+                    alpha)
+    }
+  
+  # If type = "two.sample" perform the following computations
+  
+  if(type == "two.sample"){
+    d.crit = (2*t.crit)/sqrt(df)
+    ci = as.numeric(
+      quiet(MBESS::ci.smd(smd = d.crit, n.1 = n/2, n.2 = n/2)[c(1,3)])
+    )
+    
+    
+    d.ci = quiet(ci.smd(smd = d.crit, n.1 = n/2, n.2 = n/2))
+    d.ci.LL = d.ci$Lower.Conf.Limit.smd
+    d.ci.UL = d.ci$Upper.Conf.Limit.smd
+    moe = (ci[2]-ci[1])/2
 
-bl = cbind("age.0",
-          "male.0",
-          "caucasian.0",
-          "working.0",
-          "bmi.0",
-          "pss.0",
-          "vo2max.0")
+    res.d = sprintf("d.crit = %.2f, %.0f%% CI [%.2f, %.2f], MoE = %.2f",
+                    d.crit,
+                    (1-alpha)*100,
+                    ci[1],
+                    ci[2],
+                    moe)
+    
+    res.t = sprintf("t.crit(%.0f) = %.2f, p.crit = %.3f",
+                    df,
+                    t.crit,
+                    alpha)
+    }
+
+  # Define the res variable as our results of interest
+  
+  res = list(d.crit = c("ci.LL" = ci[1], "d" = d.crit, "ci.UL" = ci[2]),
+             moe = moe,
+             df = df,
+             t.crit = t.crit,
+             p.crit = alpha)
+  
+  # Round the res variable to two decimal places
+  
+  res.round = lapply(res,round,2)
+  
+  
+  # If silent = FALSE print the following strings
+  
+  if(silent == FALSE){
+    
+    cat(res.d,"\n")
+    cat(res.t,"\n\n")    
+    
+  }
+  
+  print(res.round)
+  
+  return(
+    invisible(list(d.crit = c("ci.LL" = ci[1], "d" = d.crit, "ci.UL" = ci[2]),
+              moe = moe,
+              df = df,
+              t.crit = t.crit,
+              p.crit = alpha))
+  )
+}
 
 #-------------------------------------------------------------------------------
 
-descrip <- function(dv, df, round = FALSE){
+descrip <- function(dv, dataset, silent = FALSE){
   
-################################################################################
-# This function returns descriptives
-#
-# Example use:
-# descrip(dv = "pss.1", df = "dat.wide", round = FALSE)
-################################################################################
+  # This function computes the mean, standard deviation, min, and max values
+  # for any given dv stored in a data frame.
+  # 
+  # dv: dependent variable defined as a character string
+  # dataset: data frame containing the variables
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Examples:
+  # Compute baseline descriptives for pss.0
+  # descrip(dv = pss.0, dataset = dat.wide)
+  #
+  # Begin script
 
-  # Define baseline variable of interest
+  # Define x from dataset
+
+  if(!is.character(dv)){
+    stop("dv must be defined as a character",
+         call. = FALSE)
+  }
   
-  x <- eval(parse(text = paste(df,"$",dv, sep ="")))
+  x = get(dv, dataset)
   
-  # Compute descriptives and return them
+  # Compute the following descriptives
   
   mu = mean(x)
   sdev = sd(x)
   min = min(x)
   max = max(x)
   
+  # Define res variable as a dataframe of descriptives
+  
   res = data.frame(mu = mu,
                    sdev = sdev,
                    min = min,
                    max = max)
   
-  if(round == TRUE){res = round(res,2)}
+  # Round the data for printing
   
-  return(res)
+  res.round = round(res, 2)
+  if(silent == FALSE){print(res.round)}
+  
+  # Return res variable to full set of decimal places
+  
+  return(invisible(res))
 
 }
 
 #-------------------------------------------------------------------------------
 
-descrip.res <- function(dv.list, df, round = FALSE, sav2csv = TRUE, name){
+descrip.res <- function(dvs, 
+                        dataset, 
+                        sav2csv = FALSE,
+                        sav2dir, 
+                        silent = FALSE){
   
-################################################################################
-# This function returns all relevant descriptives defined in dv.list and saves 
-# them to a csv file
-#
-# Example use:
-# descrip.res(dv.list = dos.vars, df = "dat.wide", round = TRUE, sav2csv = TRUE, name = "baseline")
-################################################################################
+  # This function computes the mean, standard deviation, min, and max values
+  # for a set of dependent variables whose string names are stored in a vector,
+  # and then returns the results in a formatted APA-like table for reporting.
+  # 
+  # dvs: vector of dependent variable names as character strings
+  # dataset: data frame containing the variables
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Examples: Report descriptive results for all variables defined by dvs
+  # descrip.res(dvs = c("age.0","male.0","caucasian.0","working.0","bmi.0","pss.0","vo2max.0"), 
+  #             dataset = dat.wide, 
+  #             sav2csv = TRUE, sav2dir = c("results","tables","table1.csv"))
+  #
+  # Begin script
   
-  # Apply the descrip function to all variables listed in dv.list
+  # If sav2csv = TRUE we must specify our save directory and file name in sav2dir
   
-  res = sapply(dv.list, function(i){
-    descrip(i, df, round)
+  if(sav2csv == TRUE){
+    if(missing(sav2dir)){
+      stop("Please specify the directory tree as a vector of strings in 'sav2dir'",
+           call. = FALSE)}
+  }
+  
+  # If sav2dir is defined we must ensure the final element must be a string name
+  # ending in the '.csv' file format
+  
+  if(!missing(sav2dir)){
+    check = tail(sav2dir, n = 1)
+    end = substr(check, nchar(check)-3+1, nchar(check))
+    if(end != "csv"){
+      stop("The final string in the 'sav2dir' vector is your csv file name and must end in '.csv'",
+           call. = FALSE)
+    }
+  }
+    
+  # Apply all dvs string names to the descrip function and return a matrix
+  # Transpose this matrix and save it as a data frame in the res variable
+  
+  res = sapply(dvs, function(i){
+    descrip(dv = i, dataset = dataset, silent = TRUE)
   })
+  
   res = as.data.frame(t(res))
+
+  # Format the results in accordance with an APA-like table
   
-  # Clean up the results so they are presented nicely
+  s1 = sprintf("%.2f (%.2f)",res$mu, res$sdev)
+  s2 = sprintf("%.2f - %.2f",res$min, res$max)
+  s3 = cbind(s1,s2)
+  colnames(s3) = c("M (SD)", "Range")
+  rownames(s3) = dvs
+  final = as.data.frame(s3)
   
-  temp1 = sprintf("%.2f (%.2f)",res$mu, res$sdev)
-  temp2 = sprintf("%.2f - %.2f",res$min, res$max)
-  temp3 = cbind(temp1,temp2)
-  colnames(temp3) = c("M (SD)", "Range")
-  rownames(temp3) = dv.list
-  clean.res = as.data.frame(temp3)  
-  
-  # Saves results to csv file
-  
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here
+  # If sav2csv = TRUE save these results in the directory specified in sav2dir
   
   if(sav2csv == TRUE){
     
-    temp = clean.res
-    dv = rownames(temp)
-    rownames(temp) = NULL
-    temp = cbind(dv, temp)
-    name = paste0(name, "_descrip.csv")
+    final.csv = final
+    dv = rownames(final.csv)
+    rownames(final.csv) = NULL
+    final.csv = cbind(dv, final.csv)
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
     
-    write.table(temp,
-                file = here("results","descriptives",name),
-                append = F,
-                row.names = F,
-                col.names = T,
-                sep=",")
+    utils::write.table(final.csv,
+                       file = dir,
+                       append = F,
+                       row.names = F,
+                       col.names = T,
+                       sep=",")
     
   }
   
-  res = as.data.frame(clean.res)
+  if(silent == FALSE){print(final)}
   
-  return(res)
+  return(invisible(final))
 }
+
 #-------------------------------------------------------------------------------
 
-descrip.by <- function(dv, by = "pss.ch", df, dichot = NULL, count = FALSE){
-
-################################################################################
-# This function computes baseline descriptive relative to a 'by' variable. It
-# returns summary statistics for the full sample, the sample reporting "<0" on 
-# the 'by' variable, and the sampe reporting ">0" on the by variable.
-#
-# Example use:
-# descrip.by(dv = "pss.0", by = "pss.ch", df = "dat.wide")
-################################################################################
+descrip.by <- function(dv, by, dataset, dichot = NULL, count = FALSE){
   
-  # Define variables
+  # This function computes descriptives for 'dv' as a function of whether a 'by'
+  # variable decreased (<0) or increased/stayed the same (>=0). It returns a 
+  # three column data frame: column 1 is descriptives for full data set of 'dv',
+  # column 2 is descriptives for 'dv' for only those who decreased on the 'by' 
+  # variable, column 3 is descriptives for 'dv' for only those who increased/stayed
+  # the same on the 'by' variable. 
+  # 
+  # dv: dependent variable name as string
+  # by: by variable name as string
+  # dataset: data frame containing the dv and by variables
+  # dichot: if dichot is specified, the descriptives will be computed as counts
+  # and percentages of the dichot level. E.g. dichot = 1 will return how many
+  # observations were had a dummy value of 1 out of the full data set.
+  # count: a logical indicating whether to return count and percentage data. If
+  # factor is specified this logical is not necessary. 
+  #
+  # Example use:
+  # Compute pss.0 scores for full dataset, those who experience reduction
+  # in pss.ch, and those who experienced an increase or no change in pss.ch
+  # descrip.by(dv = "pss.0", by = "pss.ch", dataset = dat.wide)
   
-  all.0 = eval(parse(text = paste(df,"$",dv, sep ="")))
-  by.var = eval(parse(text = paste(df,"$",by, sep ="")))
+  # Begin script
   
-  # Define a dataframe and flag those less than/equal or greater than zero on 
-  # the 'by' variable
+  if(!is.character(dv) || !is.character(by)){
+    stop("dv and by variable names must be defined as characters",
+         call. = FALSE)
+  }
   
-  dat <- as.data.frame(cbind(all.0,by.var))
+  # Define x from dataset
+  
+  all = get(dv, dataset)
+  by.var = get(by, dataset)
+  
+  dat = as.data.frame(cbind(all, by.var))
+  
+  # Flag variables in by.var < 0 and create two new vectors:
+  # less: dv < 0 on by variable
+  # greq: dv >= 0 on by variable
+  
   flag = dat$by.var < 0
-  less.0 = dat$all.0[flag]
-  greq.0 = dat$all.0[!flag]
+  less = dat$all[flag]
+  greq = dat$all[!flag]
   
-  # Define a function to return relevant values
+  # Return descriptives for all, less, and greq
   
-  return.these <- function(i){
+  dothis <- function(i){
+    
     n = length(i)
-    
-    if(!is.null(dichot)){
-      n = sum(i == dichot)
-    }
-    
-    pcnt = (n/length(all.0))*100
-    
+    if(!is.null(dichot)){n = sum(i == dichot)}
+    pcnt = (n/length(all))*100
     mu = mean(i)
     sdev = sd(i)
     min = min(i)
     max = max(i)
-
     
     return(list(n = n, pcnt = pcnt, mu = mu, sdev = sdev, min = min, max = max))
+    
   }
+    
+  # Apply the function to all, less, and greq
+    
+  aa = dothis(all)
+  ll = dothis(less)
+  gg = dothis(greq)
+    
+  # Combine these results into a transposed data frame  
   
-  # Apply this function to the full sample, the sample reporting less than/equal
-  # or greater than zero on the  'by' variable
-  
-  all = return.these(all.0)
-  less = return.these(less.0)
-  greq = return.these(greq.0)
-  
-  res = as.data.frame(t(cbind(all,less,greq)))
-  
-  # Return a dataframe depending on whether dichot is defined
-  
-  if(is.null(dichot)){
-    temp1 = sprintf("%.2f (%.2f)",res$mu, res$sdev)
-    temp2 = rbind(temp1)
-    colnames(temp2) = cbind("All","by declined","by increased/no change")
-    rownames(temp2) = dv
-    clean.res = as.data.frame(temp2)  
-  }
-  
-  if(!is.null(dichot) || count == TRUE){
-  temp1 = sprintf("%s (%.2f%%)",res$n, res$pcnt)
-  temp2 = rbind(temp1)
-  colnames(temp2) = cbind("All","by declined","by increased/no change")
-  rownames(temp2) = dv
-  clean.res = as.data.frame(temp2)
-  }
-
-  return(res = list(t(res), clean.res = clean.res))
+  res = as.data.frame(t(cbind(aa, ll, gg)))
+  rownames(res) = c("all", "less", "greq")
+    
+  # Format results as an APA-like table
+    
+  s1 = rbind(sprintf("%.2f (%.2f)", res$mu, res$sdev))
+  if(!is.null(dichot) || count == TRUE){s1 = rbind(sprintf("%s (%.2f%%)", res$n, res$pcnt))}
+  colnames(s1) = cbind("all", paste0(by,"<0"), paste0(by,">=0"))
+  rownames(s1) = dv
+  res2 = as.data.frame(s1)
+    
+  return(res = list(
+    res1 = t(res), 
+    res2 = res2))
   
 }
 
 #-------------------------------------------------------------------------------
 
-bl.table <- function(sav2csv = TRUE){
+baseline.res <- function(sav2csv = FALSE, sav2dir, silent = FALSE){
   
-################################################################################
-# This function returns Table 1 using the descrip.by function and saves results
-# to a csv file.
-# 
-# Example use:
-# bl.table()
-################################################################################  
+  # The baseline.res function is a lazy function that will return the baseline
+  # table in an APA-like data frame. 
+  #
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  # 
+  # Example use:
+  # Save the baseline.res data to a specific directory 
+  # baseline.res(sav2csv = TRUE, sav2dir = c("results","tables","table1.csv"))
   
-  res = 
-  rbind(
-  descrip.by(dv = "pss.ch", by = "pss.ch", df = "dat.wide", count = TRUE)$clean.res,
-  descrip.by(dv = "pss.0", by = "pss.ch", df = "dat.wide")$clean.res,
-  descrip.by(dv = "age.0", by = "pss.ch", df = "dat.wide")$clean.res,
-  descrip.by(dv = "male.0", by = "pss.ch", df = "dat.wide", dichot = 1)$clean.res,
-  descrip.by(dv = "male.0", by = "pss.ch", df = "dat.wide", dichot = 0)$clean.res,
-  descrip.by(dv = "caucasian.0", by = "pss.ch", df = "dat.wide", dichot = 1)$clean.res,
-  descrip.by(dv = "caucasian.0", by = "pss.ch", df = "dat.wide", dichot = 0)$clean.res,
-  descrip.by(dv = "working.0", by = "pss.ch", df = "dat.wide", dichot = 1)$clean.res,
-  descrip.by(dv = "vo2max.0", by = "pss.ch", df = "dat.wide")$clean.res,
-  descrip.by(dv = "bmi.0", by = "pss.ch", df = "dat.wide")$clean.res
-)
+  # Begin script
   
-  # Saves results to csv file
-  
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here
+  # If sav2csv = TRUE we must specify our save directory and file name in sav2dir
   
   if(sav2csv == TRUE){
-    
-    write.table(res,
-                file = here("results","descriptives","table1.csv"),
-                append = F,
-                row.names = T,
-                col.names = T,
-                sep=",")
-
+    if(missing(sav2dir)){
+      stop("Please specify the directory tree as a vector of strings in 'sav2dir'",
+           call. = FALSE)}
   }
   
-  return(res)
+  # If sav2dir is defined we must ensure the final element must be a string name
+  # ending in the '.csv' file format
   
-  }
-
-#-------------------------------------------------------------------------------
-
-frq <- function(dv, df){
-
-################################################################################
-# This function returns frequencies for a variable
-# 
-# Example use:
-# frq("pss.1", "dat.wide")
-################################################################################  
-
-  # Define the variable
-  
-  x <- eval(parse(text = paste(df,"$",dv, sep ="")))
-  
-  # Compute frequencies
-  
-  # freq() is part of the userfriendlyscience package:
-  # Peters, G. Y. (2018). userfriendlyscience: Quantitative analysis made accessible. R package
-  # version 0.7.2. Retrieved from https://CRAN.R-project.org/package=userfriendlyscience
-  
-  fres = freq(x)
-  fres = cbind(as.numeric(fres$intermediate$categoryNames),
-               as.numeric(fres$intermediate$frequencies.raw),
-               as.numeric(round(fres$intermediate$frequencies.prop*100,2)))
-  row.names(fres) = NULL
-  colnames(fres) = c("value","freq","pcnt")
-  
-  fres = cbind("dv" = rep(dv, nrow(fres)),fres)
-  fres = as.data.frame(fres)
-
-  return(fres)
-  
-}
-
-#-------------------------------------------------------------------------------
-
-frq.res <- function(dv.list, df, sav2csv = TRUE, name){
-  
-################################################################################
-# This function returns relevant baseline frequencies for a list of variables
-# using the frq() function and saves these results to a csv file
-#
-# Example use:
-# frq.res(dv.list = dos.vars, df = "dat.wide", sav2csv = TRUE, name = dosage)
-################################################################################
-  
-  res = lapply(dv.list, function(i){
-    frq(i, df)
-  })
-
-  # Saves results to csv file
-  
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here
- 
-  if(sav2csv == TRUE){
-  
-    name = paste0(name, "_freq.csv")
-    
-    cols = cbind("dv","value","freq","pcnt")
-    
-    write.table(cols,
-                file = here("results","descriptives",name),
-                append = F,
-                row.names = F,
-                col.names = F,
-                sep=",")
-    
-    for(i in 1:length(res)){
-    
-    write.table(res[i],
-                file = here("results","descriptives",name),
-                append = T,
-                row.names = F,
-                col.names = F,
-                sep=",")
-    
+  if(!missing(sav2dir)){
+    check = tail(sav2dir, n = 1)
+    end = substr(check, nchar(check)-3+1, nchar(check))
+    if(end != "csv"){
+      stop("The final string in the 'sav2dir' vector is your csv file name and must end in '.csv'",
+           call. = FALSE)
     }
-      
   }
   
-  return(res)
-}
-
-#-------------------------------------------------------------------------------
-
-################################################################################
-# Defines a vector of variable names for all 1-df effects
-################################################################################
-
-vars = cbind("pss",
-            "sdass",
-            "adass",
-            "ddass",
-            "who",
-            "maas",
-            "erq.cr",
-            "rrs.br",
-            "pswq",
-            "vo2max")
-
-#-------------------------------------------------------------------------------
-  
-pair.test <- function(x, df.wide, df.long, plotit = FALSE){
-
-################################################################################
-# This function computes 1-df effects. It requires you to specify the name
-# of a 1-df effect, and where this variable is in a wide and long dataframe. 
-# It will compute all descriptive statistics, perform a t-test of T1-T0 gain
-# scores, compute CIs from 75% to 95%, and compute different variants of 
-# Cohen's d. It will also generate a plot of the T1 and T0 scores, and the T1-T0
-# difference scores.
-#
-# Example use:
-# pair.test(x = "pss",df.wide = "dat.wide", df.long = "dat.long")
-################################################################################  
-    
-  # Define variables and df
-  
-  t0 <- eval(parse(text = paste(df.wide,"$",x,".0", sep ="")))
-  t1 <- eval(parse(text = paste(df.wide,"$",x,".1",sep = "")))
-  df.long <- eval(parse(text = paste(df.long)))
-  
-  # Compute descriptives
-  
-  # outpro is part of the Rallfun-v32 package
-  # Wilcox, R. R. (2018). Rallfun-v35. Retrieved from https://dornsife.usc.edu/labs/rwilcox/software/
-  
-  mu.t0 = mean(t0)
-  sd.t0 = sd(t0)
-  t0.ci.LL = t.test(t0, conf.level = 0.95)$conf.int[1]
-  t0.ci.UL = t.test(t0, conf.level = 0.95)$conf.int[2]
-  
-  mu.t1 = mean(t1)
-  sd.t1 = sd(t1)
-  t1.ci.LL = t.test(t1, conf.level = 0.95)$conf.int[1]
-  t1.ci.UL = t.test(t1, conf.level = 0.95)$conf.int[2]
-  
-  ch = t1-t0
-  n = length(ch)
-  r <- cor(t1, t0, method = "pearson")
-  mu = mean(ch)
-  sd.ch <- sd(ch)
-  sd.av = sqrt((sd(t1)^2+sd(t0)^2)/2)
-  min = min(ch)
-  max = max(ch)
-  norm = shapiro.test(ch)$p.value
-  out = outpro(ch, plotit = FALSE)
-  
-  # Compute t test
-  
-  # Main results
-  test = t.test(ch, mu = 0)
-  tval = as.numeric(test$statistic)
-  df= as.numeric(test$parameter)
-  pval = as.numeric(test$p.value)
-  
-  # Compute multiple CIs on means
-  
-  test.ci <- sapply(seq(0.75,0.95,0.05), function(i){
-    test = t.test(ch, mu = 0, conf.level = i)
-    ci.LL = test$conf.int[1]
-    ci.UL = test$conf.int[2]
-    c("ci.LL" = ci.LL,
-      "ci.UL" = ci.UL
-      )
-  })
-  
-  test.ci = as.data.frame(t(test.ci))
-  test.ci = cbind(seq(0.75,0.95,0.05),test.ci)
-  colnames(test.ci) = c("conf.lvl","ci.LL","ci.UL")
-  
-  # Compute different effect sizes
-  
-  dz = mu/sd.ch
-  CL = 1 - pnorm(mu/sd.ch) # Chance that a person picked at random from t0 will have a higher score than a person picked at random from t1
-  d.av = mu/sd.av
-  
-  # Compute multiple CIs on d.av
-  
-  # conf.limits.nct is part of the MBESS package
-  # Kelley, K. (2018). MBESS: The MBESS R Package. R package version 4.4.3. 
-  # Retrieved from https://CRAN.R-project.org/package=MBESS
-  
-  d.ci <- sapply(seq(0.75,0.95,0.05), function(i){
-    limits <- conf.limits.nct(df = df, t.value = test$statistic, conf.level = i)
-    d.av.LL <- (limits$Lower.Limit*sd.ch)/(sd.av*sqrt(n))
-    d.av.UL <- (limits$Upper.Limit*sd.ch)/(sd.av*sqrt(n))
-    c("d.av.LL" = d.av.LL,
-      "d.av.UL" = d.av.UL
-    )
-  })
-  
-  d.test.ci = as.data.frame(t(d.ci))
-  d.test.ci = cbind(seq(0.75,0.95,0.05),d.test.ci)
-  colnames(d.test.ci) = c("conf.lvl","ci.LL","ci.UL")
-  
-  # Perform a robust test of the 20% trimmed mean differences as a sensitivity 
-  # test
-  
-  # trimpb is part of the Rallfun-v32 package
-  # Wilcox, R. R. (2018). Rallfun-v35. Retrieved from https://dornsife.usc.edu/labs/rwilcox/software/
-  
-  test.rob = trimpb(x = t1-t0, tr = 0.2, nboot = 2000, pr = FALSE)
-  mu.rob = test.rob$estimate
-  pval.rob = test.rob$p.value
-  ci.LL.rob = test.rob$ci[1]
-  ci.UL.rob = test.rob$ci[2]
-  
-  # Generate a plots
-  
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here
-  
-  if(plotit == TRUE){
-  
-  mu.t0.text = sprintf("T0: M = %.2f, 95%% CI [%.2f, %.2f]", mu.t0, t0.ci.LL, t0.ci.UL)
-  mu.t1.text = sprintf("T1: M = %.2f, 95%% CI [%.2f, %.2f]", mu.t1, t1.ci.LL, t1.ci.UL)
-    
-  # Generate a plot of the T1 and T0 scores
-  
-  pair.plot =
-
-    suppressWarnings(
-    
-    ggplot() +
-      geom_violin(dat = df.long, aes(x = factor(time), y = df.long[,x])) +
-      geom_point(dat = df.long, aes(x = factor(time), y = df.long[,x], group = id), shape = 1) +
-      geom_line(dat = df.long, aes(x = factor(time), y = df.long[,x], group = id), linetype = 2, size = 0.5) +
-      geom_point(aes(x = factor(c(0,1)), y = c(mu.t0,mu.t1)), size = 2) +
-      geom_line(aes(x = factor(c(0,1)), y = c(mu.t0,mu.t1), group =1), size = 1) +
-      geom_errorbar(aes(x = factor(0), y = mu.t0), ymin = t0.ci.LL, ymax = t0.ci.UL, width = 0.1, size = 1) +
-      geom_errorbar(aes(x = factor(1), y = mu.t1), ymin = t1.ci.LL, ymax = t1.ci.UL, width = 0.1, size = 1) +
-      xlab("Time") + ylab("DV") + scale_x_discrete(labels=c("T1","T0"), limits = rev(levels(factor(c(0,1)))))+
-      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), name = paste(x, "Scores")) +
-      geom_label(aes(x = factor(0), y = mu.t0), label = mu.t0.text, vjust = -1.2, size = 4.4) +
-      geom_label(aes(x = factor(1), y = mu.t1), label = mu.t1.text, vjust = 2, size = 4.4) +
-      theme_light() + 
-      rotate()
-      
-    )
-  
-  print(pair.plot) 
-  # Save plot as eps file
-  ggsave(here("plots","pair_plots", paste(x,"_prepost.eps", sep = "")), plot = pair.plot, width = 7, height = 6, units = "in")
-  ggsave(here("plots","pair_plots", paste(x,"_prepost.png", sep = "")), plot = pair.plot, width = 7, height = 6, units = "in")
-  
-  mu.ch.text = sprintf("Gain: M = %.2f, 95%% CI [%.2f, %.2f]", mu, test.ci$ci.LL[5], test.ci$ci.UL[5])
-  
-  # Generate a plot of the T1-T0 gain scores
-  
-  diff.plot =
-    
-    suppressWarnings(
-      
-    ggplot() +
-      geom_violin(aes(x = "", y = ch), alpha = .8) +
-      geom_point(aes(x = "", y = ch), shape = 1, position = position_jitter(width = 0.1,height = 0)) +
-      geom_point(aes(x = "", y = mu)) +
-    
-      mapply(function(i,j){
-      geom_errorbar(aes(x = "", y = mu), ymin = test.ci[i,]$ci.LL, ymax = test.ci[i,]$ci.UL, width = j, size = 1)
-      }, 2:5, seq(0.05,0.20,0.05)) +
-      
-      geom_hline(yintercept = 0, linetype = 2) +
-      theme_light() +
-      scale_y_continuous(breaks = scales::pretty_breaks(n = 10), name = paste(x,"Gain Scores")) +
-      geom_label(aes(x = "", y = mu), label = mu.ch.text, vjust = -2.1, size = 4.4) +
-      rotate() +
-      theme(axis.title.y=element_blank(),
-            axis.text.y=element_blank(),
-            axis.ticks.y=element_blank()) 
-    
-)
-  
-  print(diff.plot)
-  ggsave(here("plots","pair_diff_plots", paste0(x,"_change.eps")), plot = diff.plot, width = 6.65, height = 4.5, units = "in")
-  ggsave(here("plots","pair_diff_plots", paste0(x,"_change.png")), plot = diff.plot, width = 6.65, height = 4.5, units = "in")
-  
-  }
-  
-  # Return all these values
-  
-  return(list(
-    n = n,
-    mu.t0 = mu.t0,
-    sd.t0 = sd.t0,
-    mu.t1 = mu.t1,
-    sd.t1 = sd.t1,
-    mu.ch = mu,
-    sd.ch = sd.ch, 
-    sd.av = sd.av,
-    mu.ch.0.75.ci.LL = as.numeric(test.ci[1,][2]),
-    mu.ch.0.75.ci.UL = as.numeric(test.ci[1,][3]),
-    mu.ch.0.80.ci.LL = as.numeric(test.ci[2,][2]),
-    mu.ch.0.80.ci.UL = as.numeric(test.ci[2,][3]),
-    mu.ch.0.85.ci.LL = as.numeric(test.ci[3,][2]),
-    mu.ch.0.85.ci.UL = as.numeric(test.ci[3,][3]),
-    mu.ch.0.90.ci.LL = as.numeric(test.ci[4,][2]),
-    mu.ch.0.90.ci.UL = as.numeric(test.ci[4,][3]),
-    mu.ch.0.95.ci.LL = as.numeric(test.ci[5,][2]),
-    mu.ch.0.95.ci.UL = as.numeric(test.ci[5,][3]),
-    min = min,
-    max = max,
-    norm = norm,
-    out = out$n.out,
-    tval = tval,
-    df = df,
-    pval = pval,
-    CL = CL,
-    dz = dz,
-    d.av = d.av,
-    d.av.ch.0.75.ci.LL = as.numeric(d.test.ci[1,][2]),
-    d.av.ch.0.75.ci.UL = as.numeric(d.test.ci[1,][3]),
-    d.av.ch.0.80.ci.LL = as.numeric(d.test.ci[2,][2]),
-    d.av.ch.0.80.ci.UL = as.numeric(d.test.ci[2,][3]),
-    d.av.ch.0.85.ci.LL = as.numeric(d.test.ci[3,][2]),
-    d.av.ch.0.85.ci.UL = as.numeric(d.test.ci[3,][3]),
-    d.av.ch.0.90.ci.LL = as.numeric(d.test.ci[4,][2]),
-    d.av.ch.0.90.ci.UL = as.numeric(d.test.ci[4,][3]),
-    d.av.ch.0.95.ci.LL = as.numeric(d.test.ci[5,][2]),
-    d.av.ch.0.95.ci.UL = as.numeric(d.test.ci[5,][3]),
-    mu.rob = mu.rob,
-    pval.rob = pval.rob,
-    ci.LL.rob = ci.LL.rob,
-    ci.UL.rob = ci.UL.rob))
-  
-}
-
-#-------------------------------------------------------------------------------
-
-pair.test.sensitivity <- function(x, dropout.n, df.wide){
-  
-################################################################################
-# Sensitivity test assuming dropout.n gain scores = 0
-#
-# Example use:
-# pair.test.sensitivity("pss", dropout.n = 7, df.wide = "dat.wide")
-################################################################################
-  
-  # Store vectors and compute gain scores
-  
-  t0 <- eval(parse(text = paste(df.wide,"$",x,".0", sep ="")))
-  t1 <- eval(parse(text = paste(df.wide,"$",x,".1",sep = "")))
-  ch = t1-t0
-  
-  # Add zeros for number of dropouts assuming they would have had no change
-  
-  ch2 = c(ch, rep(0,dropout.n))
-
-  # Compute descriptives
-  
-  n = length(ch2)
-  mu = mean(ch2)
-  sd.ch <- sd(ch2)
-  min = min(ch2)
-  max = max(ch2)
-  
-  # t test
-  
-  # Main results
-  test = t.test(ch2, mu = 0)
-  tval = as.numeric(test$statistic)
-  df= as.numeric(test$parameter)
-  pval = as.numeric(test$p.value)
-  ci.LL = test$conf.int[1]
-  ci.UL = test$conf.int[2]
-  
-  # Robust test
-  
-  # trimpb is part of the Rallfun-v32 package
-  # Wilcox, R. R. (2018). Rallfun-v35. Retrieved from https://dornsife.usc.edu/labs/rwilcox/software/
-  
-  test.rob = trimpb(x = ch2, tr = 0.2, nboot = 2000, pr = FALSE)
-  mu.rob = test.rob$estimate
-  pval.rob = test.rob$p.value
-  ci.LL.rob = test.rob$ci[1]
-  ci.UL.rob = test.rob$ci[2]
+  # Define the following data frame
   
   res = 
-  sprintf("M (SD) = %.2f (%.2f), 95%% CI [%.2f, %.2f], p = %.3f, pR = %.3f",
-          mu, sd.ch, ci.LL, ci.UL, pval, pval.rob)
+    rbind(
+      "total" = descrip.by(dv = "pss.ch", by = "pss.ch", dataset = dat.wide, count = TRUE)$res2,
+      "baseline.pss" = descrip.by(dv = "pss.0", by = "pss.ch", dataset = dat.wide)$res2,
+      "age" = descrip.by(dv = "age.0", by = "pss.ch", dataset = dat.wide)$res2,
+      "male" = descrip.by(dv = "male.0", by = "pss.ch", dataset = dat.wide, dichot = 1)$res2,
+      "female" = descrip.by(dv = "male.0", by = "pss.ch", dataset = dat.wide, dichot = 0)$res2,
+      "caucasian" = descrip.by(dv = "caucasian.0", by = "pss.ch", dataset = dat.wide, dichot = 1)$res2,
+      "asian" = descrip.by(dv = "caucasian.0", by = "pss.ch", dataset = dat.wide, dichot = 0)$res2,
+      "baseline.vo2max" = descrip.by(dv = "vo2max.0", by = "pss.ch", dataset = dat.wide)$res2,
+      "baseline.bmi" = descrip.by(dv = "bmi.0", by = "pss.ch", dataset = dat.wide)$res2
+    )
   
-  # Return these values
-  
-  return(list(
-    n = n,
-    mu = mu,
-    sd.ch = sd.ch,
-    min = min,
-    max = max,
-    tval = tval,
-    df = df,
-    pval = pval,
-    ci.LL = ci.LL,
-    ci.UL = ci.UL,
-    mu.rob = mu.rob,
-    pval.rob = pval.rob, 
-    res = res))
-  
-}
-
-#-------------------------------------------------------------------------------
-
-pair.res <- function(vars, df.wide, df.long, plotit = FALSE, sav2csv = TRUE){
-  
-################################################################################
-# Compute all 1-df tests and store results in a matrix. Generate all plots and
-# save results to a csv file. 
-#
-# Example use:
-# pair.res(vars, "dat.wide", "dat.long", plotit = TRUE, sav2csv = TRUE)
-################################################################################
-  
-  res <- sapply(vars, function(i){
-    pair.test(i, df.wide, df.long, plotit)
-  })
-  
-  # Clean the main results data matrix for export
-  
-  res = t(res)
-  dv = as.matrix(row.names(res))
-  res = cbind(dv,res)
-  
-  # Saves results to csv file
-  
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here
+  # If sav2csv = TRUE save these results in the directory specified in sav2dir
   
   if(sav2csv == TRUE){
     
-    write.table(res,
-                file = here("results","paired_data","paired_res.csv"),
-                append = F,
-                row.names = F,
-                col.names = T,
-                sep=",")
+    s1 = rownames(res)
+    s2 = cbind("dv" = s1, res)
+    rownames(s2) = NULL
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
+    
+    utils::write.table(s2,
+                       file = dir,
+                       append = F,
+                       row.names = F,
+                       col.names = T,
+                       sep=",")
+    
   }
   
-  return(res[,-1])
+  if(silent == FALSE){print(res)}
+  
+  return(invisible(res))
 }
 
 #-------------------------------------------------------------------------------
 
-pair.table <- function(sav2csv = TRUE){
+pair.test <- function(dv, 
+                      long.dataset, 
+                      plots = FALSE,
+                      pair.plot.wXh = c(5,6),
+                      diff.plot.wXh = c(3,6),
+                      silent = FALSE){
+  
+  # This function computes descriptive and inferential statistics for t1 vs. t0
+  # gains in variables with paired data points. Inferential statistics include 
+  # standard and robust t tests. Unstandardized gain scores are computed with
+  # 80-95% confidence limits. Standardized gain scores are computed as dz 
+  # (Cohen's dz) and dav (Cohen's dav), and are each reported with their 80-95%
+  # confidence limits. This function also generates a plot of t1 vs. t0 scores
+  # and a plot of t1-t0 difference scores. The latter plots confidence limit 
+  # error bars ranging from 80-95%. 
+  #
+  # dv: dependent variable string name
+  # long.dataset: data frame storing data in long format
+  # plots: logical indicating whether to generate and save plots
+  # pair.plot.wXh: width and height dimensions for the pair plot (inches)
+  # diff.plot.wXh: width and height dimensions for the diff plot (inches)
+  # silent: logical indicating whether to print output or silence output
+  #
+  # Example use:
+  # Compute pair.test for pss scores
+  # pair.test(dv = "pss", long.dataset = dat.long, plots = TRUE)
+  #
+  # Begin script
+  
+  # Reshape long dataset into wide dataset
+  
+  dat.wide <- reshape(long.dataset, idvar = "id", timevar = "time", direction = "wide")
+  
+  # Define pre (t0) and post (t1) variables
+  
+  x = paste0(dv,".0")
+  y = paste0(dv,".1")
+  
+  t0 = get(x, dat.wide)
+  t1 = get(y, dat.wide)
+
+  # Define a function to compute descriptive statistics for t0 and t1 data
+  
+  dothis <- function(i){
+    
+    mu = mean(i)
+    sdev = sd(i)
+    ci = as.numeric(stats::t.test(i, mu = 0)$conf.int)
+    ci.LL = ci[1]
+    ci.UL = ci[2]
+    
+    return(list(mu = mu, sdev = sdev, ci.LL = ci.LL, ci.UL = ci.UL))
+    
+  }
+  
+  # Compute descriptive statistics for t0 and t1
+  
+  t0.res = dothis(t0)
+  t1.res = dothis(t1)
+  
+  # Define a function to compute descriptive and inferential statistics for
+  # the t1-t0 gain score data
+  
+  gain <- function(i,j){
+    ch = i-j
+    n = length(ch)
+    r = stats::cor(i, j, method = "pearson")
+    mu = mean(ch)
+    sdev = sd(ch)
+    sdev.av = sqrt((sd(i)^2+sd(j)^2)/2)
+    min = min(ch)
+    max = max(ch)
+    test = stats::t.test(ch, mu = 0)
+    tval = as.numeric(test$statistic)
+    df= as.numeric(test$parameter)
+    pval = as.numeric(test$p.value)
+    dz = mu/sdev
+    dav = mu/sdev.av
+    cl.ES = 1 - pnorm(mu/sdev)
+    r.pval = trimpb(x = i-j, tr = 0.2, nboot = 2000, pr = FALSE)$p.value
+    
+    return(list(n = n, 
+                r = r, 
+                mu = mu, 
+                sdev = sdev, 
+                sdev.av = sdev.av, 
+                min = min, 
+                max = max,
+                tval = tval,
+                df = df,
+                pval = pval,
+                r.pval = r.pval,
+                dz = dz,
+                dav = dav,
+                cl.ES = cl.ES))
+  
+    }
+  
+  # Compute descriptive and inferential statistics for gain score data
+  
+  gain.res = gain(t1, t0)
+  
+  # Define a function to compute confidence limits from 80-95% on gain scores
+  
+  test.ci <- function(x, y){
+    
+    data = x-y
+    
+    res1 = 
+      sapply(seq(0.80, 0.95, 0.05), function(i){
+        ci = t.test(x = data, mu = 0, conf.level = i)$conf.int
+        c(ci[1], ci[2])
+      })
+    
+    res2 = t(res1)
+    colnames(res2) = c("ci.LL","ci.UL")
+    res2 = c(res2[1,], res2[2,], res2[3,], res2[4, ])
+    res2 = as.data.frame(rbind(res2))
+    cols = rep(format(seq(0.80, 0.95, 0.05), nsmall = 2), each = 2)
+    colnames(res2) = paste(colnames(res2), cols, sep = ".")
+    res2 = as.list(res2)
+    return(res2)
+    
+  }
+  
+  # Extract confidence limits from 80-90% on gain scores
+  
+  gain.ci = test.ci(t1,t0)
+  
+  # Define a function to compute 80-95% confidence limits on dz and dav
+  
+  dci <- function(d, n, tval, df, sdev, sdev.av, type = c("dz","dav")){
+    
+    if(type == "dz"){
+      
+      res1 = 
+        sapply(seq(0.80, 0.95, 0.05), function(i){
+        quiet(as.numeric(MBESS::ci.sm(sm = d, N = n, conf.level = i))[c(1,3)])
+      })
+      
+      res2 = t(res1)
+      colnames(res2) = c("ci.LL","ci.UL")
+      res2 = c(res2[1,], res2[2,], res2[3,], res2[4, ])
+      res2 = as.data.frame(rbind(res2))
+      cols = rep(format(seq(0.80, 0.95, 0.05), nsmall = 2), each = 2)
+      colnames(res2) = paste(colnames(res2), cols, sep = ".")
+      res2 = as.list(res2)
+      return(res2)
+      
+    }
+    
+    if(type == "dav"){
+      
+      res1 =
+        sapply(seq(0.80,0.95,0.05), function(i){
+        limits <- quiet(MBESS::conf.limits.nct(df = df, t.value = tval, conf.level = i))
+        ci.LL <- (limits$Lower.Limit*sdev)/(sdev.av*sqrt(n))
+        ci.UL <- (limits$Upper.Limit*sdev)/(sdev.av*sqrt(n))
+        c(ci.LL, ci.UL)
+        })
+      
+      res2 = t(res1)
+      colnames(res2) = c("ci.LL","ci.UL")
+      res2 = c(res2[1,], res2[2,], res2[3,], res2[4, ])
+      res2 = as.data.frame(rbind(res2))
+      cols = rep(format(seq(0.80, 0.95, 0.05), nsmall = 2), each = 2)
+      colnames(res2) = paste(colnames(res2), cols, sep = ".")
+      res2 = as.list(res2)
+      return(res2)
+      
+    }
+  }
+  
+  # Compute 80-95% confidence limits on dz and dav
+  
+  dav.ci = dci(d = gain.res$dav, 
+               n = gain.res$n, 
+               tval = gain.res$tval, 
+               df = gain.res$df, 
+               sdev = gain.res$sdev, 
+               sdev.av = gain.res$sdev.av, 
+               type = "dav")
+  
+  dz.ci = dci(d = gain.res$dz,
+              n = gain.res$n, 
+              type = "dz")
+
+  
+  # The following scripts generate a plot of t1 vs t0 scores and t1-t0 scores
+  
+  if(plots == TRUE){
+    
+    # Generate a plot of the T1 and T0 scores
+    
+    pair.plot =
+      
+      suppressWarnings(
+        
+        ggplot() +
+          geom_violin(dat = long.dataset, aes(x = factor(time), y = long.dataset[,dv]), size = 0.3, alpha = 0.8) +
+          geom_point(dat = long.dataset, aes(x = factor(time), y = long.dataset[,dv], group = id), shape = 1) +
+          geom_line(dat = long.dataset, aes(x = factor(time), y = long.dataset[,dv], group = id), linetype = "dashed", size = 0.3) +
+          geom_point(aes(x = factor(c(0,1)), y = c(t0.res$mu, t1.res$mu)), size = 2) +
+          geom_line(aes(x = factor(c(0,1)), y = c(t0.res$mu, t1.res$mu), group =1), size = 1) +
+          geom_errorbar(aes(x = factor(0), y = t0.res$mu), ymin = t0.res$ci.LL, ymax = t0.res$ci.UL, width = 0.1, size = 0.5) +
+          geom_errorbar(aes(x = factor(1), y = t1.res$mu), ymin = t1.res$ci.LL, ymax = t1.res$ci.UL, width = 0.1, size = 0.5) +
+          xlab("Time") + ylab("DV") + 
+          scale_x_discrete(labels=c("T0","T1")) + 
+          scale_y_continuous(breaks = scales::pretty_breaks(n = 10), name = paste(dv, "Scores")) +
+          theme_light()  
+        
+      )
+    
+    print(pair.plot) 
+    
+    # Save plot as eps file
+    
+    ggsave(here("plots","pair_plots", paste(dv,"_prepost.eps", sep = "")), plot = pair.plot, width = pair.plot.wXh[1], height = pair.plot.wXh[2], units = "in")
+    ggsave(here("plots","pair_plots", paste(dv,"_prepost.png", sep = "")), plot = pair.plot, width = pair.plot.wXh[1], height = pair.plot.wXh[2], units = "in")
+    
+    # Generate a plot of the T1-T0 gain scores
+    
+    diff.plot =
+      
+      suppressWarnings(
+        
+        ggplot() +
+          geom_violin(aes(x = "", y = t1-t0), alpha = .8, size = 0.3) +
+          geom_point(aes(x = "", y = t1-t0), shape = 1, position = position_jitter(width = 0.1, height = 0)) +
+          geom_point(aes(x = "", y = gain.res$mu)) +
+          
+          mapply(function(i,j,k){
+            geom_errorbar(aes(x = "", y = gain.res$mu), ymin = i, ymax = j, width = k, size = 0.5)
+          }, c(gain.ci$ci.LL.0.80,
+               gain.ci$ci.LL.0.85,
+               gain.ci$ci.LL.0.90,
+               gain.ci$ci.LL.0.95), 
+             c(gain.ci$ci.UL.0.80,
+               gain.ci$ci.UL.0.85,
+               gain.ci$ci.UL.0.90,
+               gain.ci$ci.UL.0.95),
+             seq(0.05,0.20,0.05)
+          ) +
+          
+          geom_hline(yintercept = 0, linetype = 2, size = 0.5) +
+          theme_light() +
+          scale_y_continuous(breaks = scales::pretty_breaks(n = 10), name = paste(x,"Gain Scores")) +
+          xlab("T1-T0")
+        
+      )
+    
+    print(diff.plot)
+    
+    ggsave(here("plots","pair_diff_plots", paste0(dv,"_change.eps")), plot = diff.plot, width = diff.plot.wXh[1], height = diff.plot.wXh[2], units = "in")
+    ggsave(here("plots","pair_diff_plots", paste0(dv,"_change.png")), plot = diff.plot, width = diff.plot.wXh[1], height = diff.plot.wXh[2], units = "in")
+    
+  }
+  
+  # Define the final output of the analysis
+  
+  final = list(
+    t1.res = t1.res,
+    t0.res = t0.res,
+    gain.res = gain.res,
+    gain.ci = gain.ci,
+    dav.ci = dav.ci,
+    dz.ci = dz.ci)
+  
+  # Return this output if silent = FALSE
+  
+  if(silent == FALSE){print(final)}
+  
+  return(invisible(final))
+}
+  
+#-------------------------------------------------------------------------------
+
+pair.sensitivity <- function(dv, dropout.n, long.dataset, silent = FALSE){
+  
+  # This function performs a sensitivity analysis on a dependent variable of 
+  # interest that assumes all observations for 'dropout.n' would have reported
+  # a zero change in t1-t0 gain scores. 
+  #
+  # dv: dependent variable string name
+  # dropout.n: number of observations that dropped out before t1
+  # long.dataset: data frame storing data in long format
+  # silent: logical indicating whether to print output or silence output
+  #
+  # Example use:
+  # Compute a sensitivity analysis on pss scores for a dropout equal to 7
+  # pair.sensitivity(dv = "pss", dropout.n = 7, long.dataset = dat.long)
+  #
+  # Begin script
+  
+  # Reshape long dataset into wide dataset
+  
+  dat.wide <- reshape(long.dataset, idvar = "id", timevar = "time", direction = "wide")
+  
+  # Define pre (t0) and post (t1) variables
+  
+  x = paste0(dv,".0")
+  y = paste0(dv,".1")
+  
+  t0 = get(x, dat.wide)
+  t1 = get(y, dat.wide)
+  
+  # Add zero gain scores for the number of specified dropouts under the 
+  # assumption there would have been no change in this variable
+  
+  ch = c(t1-t0, rep(0,dropout.n))
+
+  gain <- function(i){
+    n = length(i)
+    mu = mean(i)
+    sdev = sd(i)
+    min = min(i)
+    max = max(i)
+    test = stats::t.test(i, mu = 0)
+    ci = as.numeric(test$conf.int)
+    tval = as.numeric(test$statistic)
+    df= as.numeric(test$parameter)
+    pval = as.numeric(test$p.value)
+    dz = mu/sdev
+    r.pval = trimpb(x = i, tr = 0.2, nboot = 2000, pr = FALSE)$p.value
+    
+    return(list(n = n, 
+                mu = mu,
+                ci = ci,
+                sdev = sdev, 
+                min = min, 
+                max = max,
+                tval = tval,
+                df = df,
+                pval = pval,
+                r.pval = r.pval,
+                dz = dz))
+    
+  }
+  
+  # Apply function to t1-t0 change scores and define the output as res1
+  
+  res1 = gain(ch)
+  
+  # Prepare the data in a reporting format and save this as res2
+  
+  res2 = 
+  sprintf("M (SD) = %.2f (%.2f), 95%% CI [%.2f, %.2f], p = %.3f, pR = %.3f",
+          res1$mu, 
+          res1$sdev, 
+          res1$ci[1], 
+          res1$ci[2], 
+          res1$pval, 
+          res1$r.pval,
+          res1$dz)
+  
+  # Re-define res1 as the combination of res2 and res1
+  
+  res1 = c("report" = res2, res1)
+  
+  # If silent = FALSE print res1
+  
+  if(silent == FALSE){
+    print(res1)
+  }
+  
+  return(invisible(res1))
+  
+}
+
+#-------------------------------------------------------------------------------
+
+pair.test.res <- function(dvs, 
+                          long.dataset, 
+                          plots = FALSE, 
+                          pair.plot.wXh = c(7,6),
+                          diff.plot.wXh = c(6.65,4.50),
+                          sav2csv = FALSE,
+                          sav2dir, 
+                          silent = FALSE){
+
+  # This function performs the pair.test function for a vector of variable name
+  # strings defined by dvs, and returns all analyses in a data frame. 
+  #
+  # dvs: vector of dependent variable names as character strings
+  # long.dataset: data frame containing the variables in long format
+  # plots: a logical indicating whether or not to generate and print plots
+  # pair.plot.wXh: width and height dimensions for the pair plot (inches)
+  # diff.plot.wXh: width and height dimensions for the diff plot (inches)
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Example use:
+  # Run pair.test for all of the following dvs stored in dat.long
+  # pair.test.table(dvs = c("pss",
+                        #   "sdass",
+                        #   "adass",
+                        #   "ddass",
+                        #   "who",
+                        #   "maas",
+                        #   "erq.cr",
+                        #   "rrs.br",
+                        #   "pswq",
+                        #   "vo2max"), 
+                        # long.dataset = dat.long, 
+                        # sav2csv = TRUE, 
+                        # sav2dir = c("results", "tables", "table3.csv"))
+  #
+  # Begin script
+  
+  # Apply all variables stored in dvs to the following function
+  
+  s1 = 
+    sapply(dvs, function(i){
+      pair.test(dv = i, 
+                long.dataset = long.dataset, 
+                plots = plots, 
+                pair.plot.wXh = pair.plot.wXh, 
+                diff.plot.wXh = pair.plot.wXh, 
+                silent = TRUE)
+    })
+  
+  # Transpose the s1 matrix
+  
+  s1 = t(s1)
+  
+  # Apply all values stored in dvs to the following function
+  
+  s2 = 
+  sapply(dvs, function(i){
+  x = as.data.frame(s1[i,])
+  cbind(x)
+  })
+  
+  # Transpose s2, unlist the matrix, and save it as a data frame
+  
+  s2 = t(s2)
+  s2 = as.data.frame(apply(s2, 2, unlist))
+  
+  # If sav2csv is true perform the following scripts
+  
+  if(sav2csv == TRUE){
+    
+    temp = cbind("dv" = rownames(s2), s2)
+    rownames(temp) = NULL
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
+    
+    utils::write.table(temp,
+                       file = dir,
+                       append = F,
+                       row.names = F,
+                       col.names = T,
+                       sep=",")
+  }
+  
+  if(silent == FALSE){
+    cat(paste("note: columns 8 through to",length(s2[1,]), "are not shown", sep = " "),"\n")
+    cat("note: assign the function to a variable to view the full set of results in R", "\n\n")
+    print(s2[,1:7])
+  }
+  
+  return(invisible(s2))
+}
+
+#-------------------------------------------------------------------------------
+
+pair.test.table <- function(dvs, 
+                            long.dataset, 
+                            sav2csv = FALSE,
+                            sav2dir, 
+                            silent = FALSE){
  
-################################################################################
-# Reproduce Table 3
-# 
-# Example use:
-# pair.table()
-################################################################################
+  # This function performs the pair.test.res function for a vector of variable 
+  # name strings defined by dvs, and returns all analyses in an APA-like table.
+  # It does not generate plots.
+  #
+  # dvs: vector of dependent variable names as character strings
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Example use:
+  # Run pair.test for all of the following dvs stored in dat.long
+  # pair.test.table(dvs = c("pss",
+                        #   "sdass",
+                        #   "adass",
+                        #   "ddass",
+                        #   "who",
+                        #   "maas",
+                        #   "erq.cr",
+                        #   "rrs.br",
+                        #   "pswq",
+                        #   "vo2max"), 
+                        # long.dataset = dat.long, 
+                        # sav2csv = TRUE, 
+                        # sav2dir = c("results", "tables", "table3.csv"))
+  #
+  # Begin script
+  
+  # Define res as the result of pair.test.res
   
   res = 
-  pair.res(vars = vars, df.wide = "dat.wide", df.long = "dat.long", plotit = FALSE, sav2csv = FALSE)
+    pair.test.res(dvs = dvs, 
+                  long.dataset = long.dataset, 
+                  plots = FALSE, 
+                  sav2csv = FALSE, 
+                  silent = TRUE)
   
-  res = as.data.frame(res)
+  # Format results into an APA-like table
   
-  col1 = sprintf("%.2f (%.2f)",res$mu.t0, res$sd.t0)
-  col2 = sprintf("%.2f (%.2f)",res$mu.t1, res$sd.t1)
+  col1 = sprintf("%.2f (%.2f)", res$t0.res.mu, res$t0.res.sdev)
+  col2 = sprintf("%.2f (%.2f)", res$t1.res.mu, res$t1.res.sdev)
   col3 = sprintf("%.2f (%.2f) [%.2f, %.2f]",
-                 res$mu.ch, 
-                 res$sd.ch, 
-                 res$mu.ch.0.95.ci.LL,
-                 res$mu.ch.0.95.ci.UL)
+                 res$gain.res.mu, 
+                 res$gain.res.sdev, 
+                 res$gain.ci.ci.LL.0.95,
+                 res$gain.ci.ci.UL.0.95)
   col4 = sprintf("%.2f [%.2f, %.2f]", 
-                 res$d.av, 
-                 res$d.av.ch.0.95.ci.LL, 
-                 res$d.av.ch.0.95.ci.UL)
-  col5.temp = sprintf("%.3f", res$pval)
+                 res$gain.res.dav, 
+                 res$dav.ci.ci.LL.0.95, 
+                 res$dav.ci.ci.UL.0.95)
+  col4.5 = sprintf("%.2f", res$gain.res.tval)
+  col5.temp = sprintf("%.3f", res$gain.res.pval)
   col5 = substring(col5.temp, 2)
   flag = col5 == ".000"
   col5[flag] = "<.001"
-  col6.temp = sprintf("%.3f", res$pval.rob)
+  col6.temp = sprintf("%.3f", res$gain.res.r.pval)
   col6 = substring(col6.temp, 2)
   flag = col6 == ".000"
   col6[flag] = "<.001"
   
-  temp1 = cbind(col1,col2,col3,col4,col5,col6)
-  colnames(temp1) = c("T0: M (SD)",	"T1: M (SD)",	"Gain: M (SD) [95% CI]",	"dav [95% CI]",	"p",	"pR")
-  rownames(temp1) = vars
-  clean.res = as.data.frame(temp1)
- 
-  # Saves results to csv file
-  
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here 
+  temp1 = cbind(col1, col2, col3, col4, col4.5, col5, col6)
+  colnames(temp1) = c("T0: M (SD)",	"T1: M (SD)",	"Gain: M (SD) [95% CI]", "dav [95% CI]", "t",	"p",	"pR")
+  rownames(temp1) = dvs
+  final = as.data.frame(temp1)
   
   if(sav2csv == TRUE){
    
-    dv = rownames(clean.res)
-    temp = cbind(dv, clean.res)
+    dv = rownames(final)
+    temp = cbind(dv, final)
     rownames(temp) = NULL
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
     
       write.table(temp,
-                  file = here("results","paired_data","table3.csv"),
+                  file = dir,
                   append = F,
                   row.names = F,
                   col.names = T,
@@ -1008,50 +1182,97 @@ pair.table <- function(sav2csv = TRUE){
       
   }
   
-  return(clean.res)
+  if(silent == FALSE){
+    print(final)
+  }
+  
+  return(invisible(final))
   
 }
-  
+
 #-------------------------------------------------------------------------------
 
-pair.supp <- function(sav2csv = TRUE){
+pair.multiconf <- function(dvs,
+                           long.dataset,
+                           sav2csv = FALSE,
+                           sav2dir,
+                           silent = FALSE){
  
-################################################################################
-# Reproduce Supplementary Results Table 1
-# 
-# Example use:
-# pair.supp()
-################################################################################
+  # This function performs the pair.test.res function for a vector of variable 
+  # name strings defined by dvs, and returns unstandardized effect sizes and
+  # standardized effect sizes with 80-95% confidence limits in an APA-like table.
+  #
+  # dvs: vector of dependent variable names as character strings
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Example use:
+  # Run pair.test.res for all of the following dvs stored in dat.long
+  # pair.multiconf(dvs = c("pss",
+  #                        "sdass",
+  #                        "adass",
+  #                        "ddass",
+  #                        "who",
+  #                        "maas",
+  #                        "erq.cr",
+  #                        "rrs.br",
+  #                        "pswq",
+  #                        "vo2max"),
+  #                long.dataset = dat.long,
+  #                sav2csv = TRUE,
+  #                sav2dir = c("results", "tables", "supp_table1.csv"))
+  #
+  # Begin scripts
+  
+  # Run the pair.test.res function for all variables in dvs and store as res
   
   res = 
-    pair.res(vars = vars, df.wide = "dat.wide", df.long = "dat.long", plotit = FALSE, sav2csv = FALSE)
+    pair.test.res(dvs = dvs, 
+                  long.dataset = long.dataset, 
+                  plots = FALSE, 
+                  sav2csv = FALSE, 
+                  silent = TRUE)
   
-  res = as.data.frame(res)
+  # Create a list of lists for the following results
   
   res2 =
-    lapply(X = vars, FUN = function(i){
-
+    
+    lapply(X = dvs, FUN = function(i){
+      
+      x = res[i,]
+      
   col1 = rbind(
-    sprintf("%.2f",res$mu.ch[i]),
-    sprintf("%.2f",res$d.av[i])
+    sprintf("%.2f", x$gain.res.mu),
+    sprintf("%.2f", x$gain.res.dav)
   )
+  
   col2 = rbind(
-    sprintf("[%.2f, %.2f]",res$mu.ch.0.80.ci.LL[i], res$mu.ch.0.80.ci.UL[i]),
-    sprintf("[%.2f, %.2f]",res$d.av.ch.0.80.ci.LL[i], res$d.av.ch.0.80.ci.UL[i])
+    sprintf("[%.2f, %.2f]", x$gain.ci.ci.LL.0.80, x$gain.ci.ci.UL.0.80),
+    sprintf("[%.2f, %.2f]", x$dav.ci.ci.LL.0.80, x$dav.ci.ci.UL.0.80)
   )
+  
   col3 = rbind(
-    sprintf("[%.2f, %.2f]",res$mu.ch.0.85.ci.LL[i], res$mu.ch.0.85.ci.UL[i]),
-    sprintf("[%.2f, %.2f]",res$d.av.ch.0.85.ci.LL[i], res$d.av.ch.0.85.ci.UL[i])
+    sprintf("[%.2f, %.2f]", x$gain.ci.ci.LL.0.85, x$gain.ci.ci.UL.0.85),
+    sprintf("[%.2f, %.2f]", x$dav.ci.ci.LL.0.85, x$dav.ci.ci.UL.0.85)
   )
+  
   col4 = rbind(
-    sprintf("[%.2f, %.2f]",res$mu.ch.0.90.ci.LL[i], res$mu.ch.0.90.ci.UL[i]),
-    sprintf("[%.2f, %.2f]",res$d.av.ch.0.90.ci.LL[i], res$d.av.ch.0.90.ci.UL[i])
+    sprintf("[%.2f, %.2f]", x$gain.ci.ci.LL.0.90, x$gain.ci.ci.UL.0.90),
+    sprintf("[%.2f, %.2f]", x$dav.ci.ci.LL.0.90, x$dav.ci.ci.UL.0.90)
   )
+  
   col5 = rbind(
-    sprintf("[%.2f, %.2f]",res$mu.ch.0.95.ci.LL[i], res$mu.ch.0.95.ci.UL[i]),
-    sprintf("[%.2f, %.2f]",res$d.av.ch.0.95.ci.LL[i], res$d.av.ch.0.95.ci.UL[i])
+    sprintf("[%.2f, %.2f]", x$gain.ci.ci.LL.0.95, x$gain.ci.ci.UL.0.95),
+    sprintf("[%.2f, %.2f]", x$dav.ci.ci.LL.0.95, x$dav.ci.ci.UL.0.95)
   )
-  p = sprintf("%.3f",res$pval[i])
+  
+  p = sprintf("%.3f", x$gain.res.pval)
   p = substring(p,2)
   flag = p == ".000"
   p[flag] = "<.001"
@@ -1066,32 +1287,23 @@ pair.supp <- function(sav2csv = TRUE){
   
     })
   
-  final = 
-  rbind(as.data.frame(res2[1]),
-        as.data.frame(res2[2]),
-        as.data.frame(res2[3]),
-        as.data.frame(res2[4]),
-        as.data.frame(res2[5]),
-        as.data.frame(res2[6]),
-        as.data.frame(res2[7]),
-        as.data.frame(res2[8]),
-        as.data.frame(res2[9]),
-        as.data.frame(res2[10]))
- 
-  # Saves results to csv file
+  # Strip list of lists and yield a list with 'do.call' then create a data frame
+  # using 'rbind'
   
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here
+  final = do.call(rbind, res2)
+ 
+  # If sav2csv = TRUE we run the following scripts
    
   if(sav2csv == TRUE){
     
     dv = rownames(final)
     temp = cbind(dv, final)
     rownames(temp) = NULL
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
     
     write.table(temp,
-                file = here("results","paired_data","pair_supp.csv"),
+                file = dir,
                 append = F,
                 row.names = F,
                 col.names = T,
@@ -1099,66 +1311,69 @@ pair.supp <- function(sav2csv = TRUE){
     
   }
   
-  return(final)
+  if(silent == FALSE){
+    print(final)
+  }
+  
+  return(invisible(final))
   
 }
 
 #-------------------------------------------------------------------------------
 
-################################################################################
-# Defines a matrix of aerobic economy variable names
-################################################################################
+mixed.mod <- function(dv, 
+                      covar = NULL, 
+                      long.dataset, 
+                      transf = c("none","log"),
+                      silent = FALSE){
 
-econ = cbind("vo2.dv",
-             "pcnt.vo2.dv",
-             "hr.dv",
-             "rpe.dv")
-
-#-------------------------------------------------------------------------------
-
-mixed.mod <- function(econ, covar = NULL, df, transf = c("none","log","sqrt","exp"), return.dat = FALSE){
-
-################################################################################
-# This function computes LMM for each aerobic economy variable using lmer
-#
-# Example use:
-# mixed.mod(econ = "vo2.dv",df = "dat.econ.long",transf = "none")
-################################################################################
+  # This function conducts a linear mixed model fit by REML using lmerTest::lmer
+  # on the aerobic economy variable specified by 'dv' and stored in 'long.dataset'.
+  # The function allows for covariates if required, and a transformation of 'none'
+  # or 'log' may be applied to the data.
+  #
+  # dv: dependent variable defined as a character string
+  # long.dataset: data frame containing the variables in long format
+  # transf: apply no transformation 'none' or a log transformation 'log' to the 
+  # data.
+  # silent: A logical indicating whether to return print output (FALSE) or 
+  # suppress print output (TRUE)
+  #
+  # Example use:
+  # Perform a linear mixed model fit by REML for vo2.dv
+  # mixed.mod(dv = "vo2.dv", long.dataset = dat.econ.long, transf = "none")
+  #
+  # Begin script
     
-  # Define dataframe with dv = aerobic economy variable of interest
+  # Define 'dat' as our dataset data frame and create a new variable for the 
+  # dv of interest and covariate of interest
 
-  dat <- eval(parse(text = paste(df)))
-  dat$dv <- dat[,econ]
-  if(!is.null(covar) == TRUE){dat$covar <- dat[,covar]}
+  dat = long.dataset
+  dat$dv = get(dv, dat)
+  
+  if(is.null(covar) == FALSE){dat$covar = get(covar, dat)}
   
   # Set Type III SS before running lmer
+
   options(contrasts=c("contr.sum","contr.poly"))
   
   # Run the following model if no covariate is specified
   
-  # lmer() is part of the lmerTest Package
-  # Kuznetsova, A., Brockhoff, P. B., & Christensen, R. H. B. (2017). 
-  # lmerTest Package: Tests in Linear Mixed Effects Models. Journal of Statistical 
-  # Software, 82(13), 1-26. doi: 10.18637/jss.v082.i13
-  
+
   if(is.null(covar) == TRUE){
     
-  if(transf == "none"){model <- lmer(dv ~ time*samp + (1|id), data = dat)}
-  if(transf == "log"){model <- lmer(log(dv) ~ time*samp + (1|id), data = dat)}
-  if(transf == "exp"){model <- lmer(exp(dv) ~ time*samp + (1|id), data = dat)}
-  if(transf == "sqrt"){model <- lmer(sqrt(dv) ~ time*samp + (1|id), data = dat)}
-  
+  if(transf == "none"){model <- lmerTest::lmer(dv ~ time*samp + (1|id), data = dat)}
+  if(transf == "log"){model <- lmerTest::lmer(log(dv) ~ time*samp + (1|id), data = dat)}
+
   }
     
   # Run the following model if a covariate is specified
   
   if(!is.null(covar) == TRUE){
     
-    if(transf == "none"){model <- lmer(dv ~ time*samp + covar + (1|id), data = dat)}
-    if(transf == "log"){model <- lmer(log(dv) ~ time*samp + log(covar) + (1|id), data = dat)}
-    if(transf == "exp"){model <- lmer(exp(dv) ~ time*samp + exp(covar) + (1|id), data = dat)}
-    if(transf == "sqrt"){model <- lmer(sqrt(dv) ~ time*samp + sqrt(covar) + (1|id), data = dat)}
-  
+    if(transf == "none"){model <- lmerTest::lmer(dv ~ time*samp + covar + (1|id), data = dat)}
+    if(transf == "log"){model <- lmerTest::lmer(log(dv) ~ time*samp + log(covar) + (1|id), data = dat)}
+
   }
   
   # Return model summary, model anova, model comparison, and model variance
@@ -1168,61 +1383,102 @@ mixed.mod <- function(econ, covar = NULL, df, transf = c("none","log","sqrt","ex
   res3 = ranova(model)
   rfx <- as.data.frame(VarCorr(model))
   
-  if(return.dat==TRUE){return(list(model = model, summary = res1, anova = res2, dat = dat))}
+  # If silent = FALSE print the following results
   
-  return(list(model = model, 
-              summary = res1, 
-              anova = res2,
-              rfx = rfx,
-              delete.rand.eff = res3))
+  if(silent == FALSE){
+    
+    print(list(model = model, 
+               summary = res1, 
+               anova = res2,
+               rfx = rfx,
+               delete.rand.eff = res3))
+    
+  }
+  
+  
+  return(invisible(list(model = model, 
+                        summary = res1, 
+                        anova = res2,
+                        rfx = rfx,
+                        delete.rand.eff = res3,
+                        dat = dat)))
 }
 
 #-------------------------------------------------------------------------------
 
-mixed.model.res <- function(econ, covar = NULL, df, transf, sav2csv = TRUE){
+mixed.mod.res <- function(dvs, 
+                          covars = NULL, 
+                          long.dataset, 
+                          transf = c("none", "log"), 
+                          sav2csv = TRUE,
+                          sav2dir,
+                          silent = FALSE){
+  
+  # This function will run the mixed.mod function for all variables names stored
+  # in dvs from long.dataset. The script will save the ANOVA results to a csv 
+  # file.
+  #
+  # dvs: vector of dependent variable names as character strings
+  # covars: vector of covariate variable names as character strings. Must match
+  # the same order as the dvs vector for which they are covariates for. 
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Example use:
+  # Run mixed models for all aerobic economy variables
+  # mixed.mod.res(dvs = c("vo2.dv",
+  #                       "pcnt.vo2.dv",
+  #                       "hr.dv",
+  #                       "rpe.dv"), 
+  #               long.dataset = dat.econ.long, transf = "none", 
+  #               sav2csv = TRUE, 
+  #               sav2dir = c("results", "mixed_model_data", "mixed_mod_res.csv"))
+  #
+  # Begin script
 
-################################################################################
-# This function computes all LMM results and saves results to a csv
-#
-# Example use:
-# mixed.model.res(econ = econ, df = "dat.econ.long", transf = "none", sav2csv = TRUE)
-################################################################################  
+  # Compute all mixed model results and store this in a list
+  # Run the following script if there are no covariates
   
-  # Compute all mixed model results and stores in matrix
+  if(is.null(covars)){
   
-  if(is.null(covar)){
-  
-  res <- lapply(econ, function(i){
-    mod = mixed.mod(econ = i,df = df,transf = transf)
-    mod = mod$anova
+  res <- lapply(dvs, function(i){
+    mod = mixed.mod(dv = i, long.dataset = long.dataset, transf = transf, silent = TRUE)$anova
   })
   
   }
   
-  if(!is.null(covar)){
+  # Run the following script if there are covariates
+  
+  if(!is.null(covars)){
   
   res <- mapply(function(i,j){
-    mod = mixed.mod(econ = i, covar = j, df = df,transf = transf)
-    mod = mod$anova
-  }, econ, covar, SIMPLIFY = FALSE)
+    mod = mixed.mod(dvs = i, covar = j, long.dataset = long.dataset, transf = transf, silent = TRUE)$anova
+  }, dvs, covars, SIMPLIFY = FALSE)
   
   }
   
-  names(res) = econ
+  # Name each element of list with correspond dependent variable name
   
-  # Saves results to csv file
+  names(res) = dvs
   
-  # here() is part of the here package
-  # Kirill Müller (2017). here: A Simpler Way to Find Your Files. R package version 0.1.
-  # https://CRAN.R-project.org/package=here
+  # If sav2csv = TRUE we run the following scripts
+  # First create a new csv file with the headings defined by 'col'.
+  # Then append each element of the 'res' list to this csv file
   
   if(sav2csv == TRUE){
     
-    
     cols = cbind("dv", "factor","Sum Sq","Mean Sq","NumDF","DenDF","F value","Pr(>F)")
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
     
     write.table(cols,
-                file = here("results","mixed_model_data","mixed_model_res.csv"),
+                file = dir,
                 append = F,
                 row.names = F,
                 col.names = F,
@@ -1231,12 +1487,12 @@ mixed.model.res <- function(econ, covar = NULL, df, transf, sav2csv = TRUE){
     for(j in 1:length(res)){
     
     temp = as.data.frame(res[j])
-    dv = rep(econ[j], nrow(temp))
+    dv = rep(dvs[j], nrow(temp))
     factor = rownames(temp)
     temp = cbind(dv,factor,temp)
       
     write.table(temp,
-                file = here("results","mixed_model_data","mixed_model_res.csv"),
+                file = dir,
                 append = T,
                 row.names = F,
                 col.names = F,
@@ -1246,31 +1502,53 @@ mixed.model.res <- function(econ, covar = NULL, df, transf, sav2csv = TRUE){
     
   }
   
-  return(res)
+  # If silent = FALSE print res
+  
+  if(silent == FALSE){
+    print(res)
+  }
+  
+  return(invisible(res))
 }
 
 #-------------------------------------------------------------------------------
 
-mixed.assum <- function(econ, covar = NULL, df, transf = c("none","log","sqrt","exp")){
+mixed.assum <- function(dv,
+                        covar = NULL,
+                        long.dataset,
+                        transf = c("none", "log"),
+                        print.plots = FALSE,
+                        silent = FALSE){
   
-################################################################################
-# This function generate plots for testing each LMM assumption, and return
-# participant-level and dv-level responses that may be outliers as identified
-# through Cooks distance
-#
-# Example use:
-# mixed.assum(econ = "vo2.dv",df = "dat.econ.long",transf = "none")
-################################################################################  
+  # This function generates plots to test all assumptions for linear mixed models
+  # computed on the dv data. It also identifies potential participant-level and
+  # response-level outliers through Cooks distance.
+  #
+  # dv: dependent variable defined as a character string
+  # long.dataset: data frame containing the variables in long format
+  # transf: apply no transformation 'none' or a log transformation 'log' to the 
+  # data.
+  # silent: A logical indicating whether to return print output (FALSE) or 
+  # suppress print output (TRUE)
+  #
+  # Example use:
+  # Check assumptions for mixed model fit for vo2.dv
+  # mixed.assum(dv = "vo2.dv", long.dataset = dat.econ.long, transf = "none")
+  #
+  # Begin script
   
-  # Run the mixed.mod function and save the model
+  # Run the mixed.mod function and save the model and dataset
   
-  model = mixed.mod(econ = econ, covar = covar, df = df,transf = transf, return.dat = TRUE)$model
-  
-  # Save the dataframe used in the mixed.model function
-  
-  dat = mixed.mod(econ = econ,covar = covar,df = df,transf = transf, return.dat = TRUE)$dat
-  
-# Check the assumption of linearity and homoskedasticity
+  s1 = mixed.mod(dv = dv, 
+                 covar = covar, 
+                 long.dataset = long.dataset, 
+                 transf = transf, 
+                 silent = TRUE)
+
+  model = s1$model
+  dat = s1$dat
+
+  # Check assumptions of linearity and homoskedasticity
 
   homosk <- 
     ggplot() +
@@ -1279,35 +1557,31 @@ mixed.assum <- function(econ, covar = NULL, df, transf = c("none","log","sqrt","
     geom_smooth(aes(x = fitted(model),y = residuals(model)), se = T, method = "lm")+
     geom_hline(yintercept = 0, linetype=2)+
     labs(x = "Fitted Values", y = "Residuals")+
-    ggtitle(paste0(econ, " (",transf,"-transformation)")) +
+    ggtitle(paste0(dv, " (",transf,"-transformation)")) +
     theme_light()
   
-  # Save plot as eps file
-  sapply(c(".eps",".png"), function(i){
-    plot1name = paste0(econ,"_1","_homosk",i)
+  # Save plot as png file
+  
+    plot1name = paste0(dv,"_1","_homosk.png")
     ggsave(here("plots", "mixed_model_plots","assump_plots", plot1name), plot = homosk, width = 5, height = 5, units = "in")
-  })
-
+    
+    if(print.plots == TRUE){print(homosk)}
+    
   # Check for normality using a QQ Plot
   
-  # ggqq() is part of the userfriendlyscience package:
-  # Peters, G. Y. (2018). userfriendlyscience: Quantitative analysis made accessible. R package
-  # version 0.7.2. Retrieved from https://CRAN.R-project.org/package=userfriendlyscience
+  ggqq = userfriendlyscience::ggqq(resid(model))
+  ggqq = ggqq + ggtitle(paste0(dv, " (",transf,"-transformation)"))
   
-  ggqq = ggqq(resid(model))
-  ggqq= ggqq + ggtitle(paste0(econ, " (",transf,"-transformation)"))
   
-  # Save plot as eps file
-  sapply(c(".eps",".png"), function(i){
-    plot2name = paste0(econ,"_2","_qqplot",i)
+  # Save png file
+
+    plot2name = paste0(dv,"_2","_qqplot.png")
     ggsave(here("plots", "mixed_model_plots", "assump_plots", plot2name), plot = ggqq, width = 5, height = 5, units = "in")
-  })
+  
+    if(print.plots == TRUE){print(ggqq)}
   
   # Check for for outlier participants using criterion of Cooks Distance > 1
-  
-  # cooks.distance() function is modified from HLMdiag
-  # Loy, A., & Hofmann, H. (2014). HLMdiag: A Suite of Diagnostics for 
-  # Hierarchical Linear Models in R. 2014, 56(5), 28. doi: 10.18637/jss.v056.i05
+  # cooks.distance() function is modified by HLMdiag package
   
   n = length(unique(dat$id))
   n.dv = length(dat$dv)
@@ -1336,16 +1610,16 @@ mixed.assum <- function(econ, covar = NULL, df, transf = c("none","log","sqrt","
     geom_point() +
     geom_vline(xintercept = omit, linetype = 2) +
     labs(x = "Cooks Distance for ID", y = "Rank")+
-    ggtitle(paste0(econ, " (",transf,"-transformation)"))+
+    ggtitle(paste0(dv, " (",transf,"-transformation)"))+
     theme_light()
   
-  # Save plot as eps and png files
+  # Save plot as png file
   
-  sapply(c(".eps",".png"), function(i){
-    plot3name = paste0(econ,"_3","_cook_id",i)
+    plot3name = paste0(dv,"_3","_cook_id.png")
     ggsave(here("plots", "mixed_model_plots", "assump_plots", plot3name), plot = cook_id, width = 5, height = 5, units = "in")
-  })
   
+    if(print.plots == TRUE){print(cook_id)}
+    
   mu.cook_id = mean(vals_id$cooksd_id)
   min.cook_id = min(vals_id$cooksd_id)
   max.cook_id = max(vals_id$cooksd_id)
@@ -1366,14 +1640,15 @@ mixed.assum <- function(econ, covar = NULL, df, transf = c("none","log","sqrt","
     geom_point() +
     geom_vline(xintercept = omit, linetype = 2) +
     labs(x = "Cooks Distance for DV", y = "Rank")+
-    ggtitle(paste0(econ, " (",transf,"-transformation)"))+
+    ggtitle(paste0(dv, " (",transf,"-transformation)"))+
     theme_light()
   
-  # Save plot as eps and png file
-  sapply(c(".eps",".png"), function(i){
-    plot4name = paste0(econ,"_4","_cook_dv",i)
+  # Save plot as png file
+
+    plot4name = paste0(dv,"_4","_cook_dv.png")
     ggsave(here("plots", "mixed_model_plots", "assump_plots", plot4name), plot = cook_dv, width = 5, height = 5, units = "in")
-  })
+
+    if(print.plots == TRUE){print(cook_dv)}
   
   mu.cook_dv = mean(vals_dv$cooksd_dv)
   min.cook_dv = min(vals_dv$cooksd_dv)
@@ -1388,42 +1663,96 @@ mixed.assum <- function(econ, covar = NULL, df, transf = c("none","log","sqrt","
   extrdv.3 <- which(vals_dv$cooksd_dv %in% sort(vals_dv$cooksd_dv,TRUE)[3])
   extrdv.3.pos <- vals_dv[extrdv.3,]
   
-  return(list(extreme.id.1 = extrid.1.pos,
-              extreme.id.2 = extrid.2.pos,
-              extreme.id.3 = extrid.3.pos,
-              extreme.dv.1 = extrdv.1.pos,
-              extreme.dv.2 = extrdv.2.pos,
-              extreme.dv.3 = extrdv.3.pos))
+  final = list(extreme.id.1 = extrid.1.pos,
+               extreme.id.2 = extrid.2.pos,
+               extreme.id.3 = extrid.3.pos,
+               extreme.dv.1 = extrdv.1.pos,
+               extreme.dv.2 = extrdv.2.pos,
+               extreme.dv.3 = extrdv.3.pos)
+  
+  if(silent == FALSE){
+    print(final)
+  }
+  
+  return(invisible(final))
 }
 
 #-------------------------------------------------------------------------------
 
-mixed.assum.res <- function(econ, covar = NULL, df, transf){
+mixed.assum.res <- function(dvs, 
+                            covars = NULL, 
+                            long.dataset, 
+                            transf = c("none","log"),
+                            silent = FALSE){
 
-################################################################################
-# This function generate all plots for testing LMM assumptions for each aerobic
-# economy variable.
-#
-# Example use:
-# mixed.assum.res(econ = econ, df = "dat.econ.long", transf = "none")
-################################################################################    
+  # This function runs the mixed.assum function for all variables listed in dvs
+  # and stored in long.dataset. 
+  #
+  # dvs: vector of dependent variables defined as character strings
+  # covars: vector of covariate variable names as character strings. Must match
+  # the same order as the dvs vector for which they are covariates for. 
+  # long.dataset: data frame containing the variables in long format
+  # transf: apply no transformation 'none' or a log transformation 'log' to the 
+  # data.
+  # silent: A logical indicating whether to return print output (FALSE) or 
+  # suppress print output (TRUE)
+  #
+  # Example use:
+  # Check assumptions for all variables in dvs
+  # mixed.assum.res(dvs = c("vo2.dv",
+  #                         "pcnt.vo2.dv",
+  #                         "hr.dv",
+  #                         "rpe.dv"), 
+  #                 long.dataset = dat.econ.long, 
+  #                 transf = "none")
+  #
+  # Begin script
   
   # Computes all mixed model assumption plots
+  # Run the following scripts if covar = NULL
   
   if(is.null(covar)){
   
-  res <- sapply(econ, function(i){
-    mixed.assum(econ = i, covar = covar, df = df,transf = transf)
+  res <- sapply(dvs, function(i){
+    mixed.assum(dv = i, 
+                covar = NULL, 
+                long.dataset = long.dataset, 
+                transf = transf, 
+                silent = TRUE, 
+                print.plots = FALSE)
   })
-  return(res)
+  
+  res = as.data.frame(apply(res, 2, unlist))
+  res = round(res, 2)
+  
+  if(silent == FALSE){
+    print(res)
   }
+  
+  return(invisible(res))
+  
+  }
+  
+  # Run the following scripts if covar is specified
   
   if(!is.null(covar)){
     
     res <- mapply(function(i,j){
-      mixed.assum(econ = i, covar = j, df = df,transf = transf)
-    }, econ, covar)
-    return(res)
+      mixed.assum(dv = i, 
+                  covar = j, 
+                  long.dataset = long.dataset,
+                  transf = transf,
+                  silent = TRUE)}, 
+      dvs, covars)
+    
+    res = as.data.frame(apply(res, 2, unlist))
+    res = round(res, 2)
+    
+    if(silent == FALSE){
+      print(res)
+    }
+    
+    return(invisible(res))
   }
   
 }
@@ -1431,46 +1760,53 @@ mixed.assum.res <- function(econ, covar = NULL, df, transf){
 
 #-------------------------------------------------------------------------------
 
-emm.test <- function(econ, 
+emm.test <- function(dv, 
                      covar = NULL,
-                     df, 
-                     transf = c("none","log","sqrt","exp"), 
+                     long.dataset, 
                      effect = c("time","samp","timeXsamp"),
-                     plotit = TRUE){
+                     plots = FALSE,
+                     plot.wXh = c(6.3, 4.5),
+                     silent = FALSE){
 
-################################################################################
-# This function computes emmeans for follow-up to main effects and interactions
-# in each LMM for the aerobic economy data
-#
-# Example use:
-# emm.test(econ = "pcnt.vo2.dv", df = "dat.econ.long", transf = "none", effect = "time")
-# emm.test(econ = "pcnt.vo2.dv", df = "dat.econ.long", transf = "none", effect = "timeXsamp")
-################################################################################  
+  # This function computes estimated marginal means for main effects or follow-up
+  # to interaction effects. Also generates a time-by-sample plot of the data. 
+  # The 'transf' option was disabled because assumptions of data for each dv 
+  # were adequate using no transformation of data.
+  #
+  # dv: dependent variable string name
+  # covar: covariate string name
+  # long.dataset: data frame which contains the dv and covariate in long format
+  # effect: perform emmeans on main effect of time, sample, or their interaction
+  # plots: a logical indicating whether to generate plots
+  # plot.wXh: width and height dimensions for the plot (inches)
+  # silent: a logical indicating whether to return print output
+  #
+  # Example use:
+  # emm.test(dv = "vo2.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE)
     
-  # Save the model from mixed.mod
+  # Run the mixed.mod function and save the model and dataset
   
-  model = mixed.mod(econ = econ,covar = covar,df = df,transf = transf, return.dat = TRUE)$model
+  s1 = mixed.mod(dv = dv, 
+                 covar = covar, 
+                 long.dataset = long.dataset, 
+                 transf = "none", 
+                 silent = TRUE)
   
-  # Save the dataframe from mixed.mod
-  
-  dat = mixed.mod(econ = econ,covar = covar,df = df,transf = transf, return.dat = TRUE)$dat
+  model = s1$model
+  dat = s1$dat
   
   # Compute main effect with Satterthwaite df method
-  
-  # emmeans() is part of the emmeans package:
-  # Lenth, R. (2019). emmeans: Estimated Marginal Means, aka Least-Squares Means 
-  # [R package version 1.3.2]. Retrieved from https://CRAN.R-project.org/package=emmeans
-  
+
   if(effect != "timeXsamp"){
   
-  emm = emmeans(model,effect,lmer.df = "satterthwaite")
+  emm = emmeans::emmeans(model,effect,lmer.df = "satterthwaite")
   emm.diff = pairs(emm, type="response", reverse=TRUE)
 
   # Inspect effect at multiple confidence intervals from 0.75 to 0.95
   
   conf.check =
     lapply(seq(0.75,0.95,0.05), function(i){
-      res = confint(emm.diff, adjust = "none", level = c(i),reverse=TRUE)
+      res = stats::confint(emm.diff, adjust = "none", level = c(i),reverse=TRUE)
       ci = res[5:6]
       cbind(ci)
     })
@@ -1485,14 +1821,14 @@ emm.test <- function(econ,
   
   # Compute interaction effect with Satterthwaite df method
   
-  emm.int = emmeans(model, pairwise~time | samp)
+  emm.int = emmeans::emmeans(model, pairwise~time | samp)
   emm.int.contrasts = pairs(emm.int$emmeans, reverse=TRUE)
 
   # Inspect interaction T1-T0 effects at multiple confidence intervals from 0.75 to 0.95
   
   conf.check.int =
     lapply(seq(0.75,0.95,0.05), function(i){
-      res = confint(emm.int.contrasts, adjust = "none", level = i,reverse=TRUE)
+      res = stats::confint(emm.int.contrasts, adjust = "none", level = i,reverse=TRUE)
       ci = res[6:7]
       ci
     })
@@ -1505,174 +1841,250 @@ emm.test <- function(econ,
 
   # Plot the results
 
-  if(plotit == TRUE){
+  if(plots == TRUE){
   
-if(transf == "log"){dat$dv = log(dat$dv)}
-e.df = as.data.frame(emm.int)
+    e.df = as.data.frame(emm.int)
+    
+    e.df = e.df[,c("emmeans.time",
+                  "emmeans.samp",
+                  "emmeans.emmean",
+                  "emmeans.lower.CL",
+                  "emmeans.upper.CL")]
+    
+    suppressWarnings(
+      
+    emm.plot <- 
+    ggplot()+
+      geom_point(data = dat, aes(x = factor(samp), y = dv, group = factor(time)), position = position_dodge(0.2), shape = 1) +
+      geom_point(data = e.df, aes(x = factor(emmeans.samp), y = emmeans.emmean, group = factor(emmeans.time), shape = factor(emmeans.time)), size = 2, position = position_dodge(0.2)) +
+      geom_errorbar(data = e.df, aes(x = factor(emmeans.samp), y = emmeans.emmean, group = factor(emmeans.time)), ymin = e.df$emmeans.lower.CL, ymax = e.df$emmeans.upper.CL, position = position_dodge(-0.2),width = 0.1) +
+      geom_line(data = e.df, aes(x = factor(emmeans.samp), y = emmeans.emmean, group = factor(emmeans.time)),position = position_dodge(0.2)) +
+      scale_shape_discrete(name = "Time", labels = c("T0","T1")) +
+      xlab("Velocity (km/h)") + ylab(dv) + scale_x_discrete(labels=c(6,8,10,12)) +
+      ggtitle(dv) +
+      theme_light() +
+      scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
+    
+    )
+    
+    print(emm.plot)
+    
+    # Save plot as eps file
+    
+    sapply(c(".eps",".png"), function(i){
+      plotname = paste0(dv,"_lmm",i)
+      
+      ggsave(here::here("plots", "mixed_model_plots", "mixed_model_res", plotname), 
+             plot = emm.plot, 
+             width = plot.wXh[1], 
+             height = plot.wXh[2], 
+             units = "in")
+    })
+    
+    }
 
-e.df = e.df[,c("emmeans.time",
-              "emmeans.samp",
-              "emmeans.emmean",
-              "emmeans.lower.CL",
-              "emmeans.upper.CL")]
-
-suppressWarnings(
+  if(effect == "time" || effect == "samp"){
+    
+    final = list(emmeans = as.data.frame(emm), contrasts = emm.diff)
+    
+    if(silent == FALSE){print(final)}
+    
+    return(invisible(final))
+    
+    }
   
-emm.plot <- 
-ggplot()+
-  geom_point(data = dat, aes(x = factor(samp), y = dv, group = factor(time)), position = position_dodge(0.2), shape = 1) +
-  geom_point(data = e.df, aes(x = factor(emmeans.samp), y = emmeans.emmean, group = factor(emmeans.time), shape = factor(emmeans.time)), size = 2, position = position_dodge(0.2)) +
-  geom_errorbar(data = e.df, aes(x = factor(emmeans.samp), y = emmeans.emmean, group = factor(emmeans.time)), ymin = e.df$emmeans.lower.CL, ymax = e.df$emmeans.upper.CL, position = position_dodge(-0.2),width = 0.1) +
-  geom_line(data = e.df, aes(x = factor(emmeans.samp), y = emmeans.emmean, group = factor(emmeans.time)),position = position_dodge(0.2)) +
-  scale_shape_discrete(name = "Time", labels = c("T0","T1")) +
-  xlab("Velocity (km/h)") + ylab(econ) + scale_x_discrete(labels=c(6,8,10,12)) +
-  ggtitle(paste0(econ," (",transf,"-transformation)")) +
-  theme_light() +
-  scale_y_continuous(breaks = scales::pretty_breaks(n = 10))
-
-)
-
-print(emm.plot)
-# Save plot as eps file
-sapply(c(".eps",".png"), function(i){
-  plotname = paste0(econ,"_lmm",i)
-  ggsave(here("plots", "mixed_model_plots", "mixed_model_res", plotname), plot = emm.plot, width = 6.3, height = 4.5, units = "in")
-})
-
-}
-
-if(effect == "time" || effect == "samp"){return(list(emmeans = as.data.frame(emm),
-                                                     contrasts = emm.diff))}
-
-if(effect== "timeXsamp"){return(list(emmeans = as.data.frame(emm.int$emmeans), 
-                                     contrasts = emm.int.contrasts))}
-
-}
+  if(effect== "timeXsamp"){
+    
+    final = list(emmeans = as.data.frame(emm.int$emmeans), contrasts = emm.int.contrasts)
+    
+    if(silent == FALSE){print(final)}
+    
+    return(invisible(final))
+  
+  }
+  }
 
 #-------------------------------------------------------------------------------
 
-emm.test.res <- function(econ, df, transf, effect, plotit = TRUE, sav2csv = TRUE){
+emm.test.res <- function(dvs, 
+                         covars = NULL, 
+                         long.dataset, 
+                         effect = c("time", "samp", "timXsamp"), 
+                         plots = FALSE, 
+                         plot.wXh = c(6.3, 4.5),
+                         sav2csv = FALSE,
+                         silent = FALSE){
+
+  # This function applies all variables in dvs to the emm.test function and
+  # returns emmean results and contrast results as two data frames. If specified,
+  # it will save each of these data frames to two separate csv files. Transf has
+  # been disabled. 
+  #
+  # dvs: vector of dependent variables defined as character strings
+  # covars: vector of covariate variable names as character strings. Must match
+  # the same order as the dvs vector for which they are covariates for. 
+  # long.dataset: data frame containing the variables in long format
+  # plots: a logical indicating whether to generate plots
+  # plot.wXh: width and height dimensions for the plot (inches)
+  # sav2csv: a logical indicating whether to save results as csv files
+  # silent: a logical indicating whether to return print output
+  #
+  # Example use:
+  # Apply emm.test to all variables in dvs
+  # emm.test.res(dvs = c("vo2.dv",
+  #                      "pcnt.vo2.dv",
+  #                      "hr.dv",
+  #                      "rpe.dv"), 
+  #              long.dataset = dat.econ.long, 
+  #              effect = "time", 
+  #              sav2csv = TRUE, 
+  #              plots = TRUE)
+  #
+  # Begin script
   
-################################################################################
-# This function computes emmeans for follow-up to main effects and interactions
-# for all LMM of aerobic economy data
-#
-# Example use:
-# emm.test.res(econ = econ, df = "dat.econ.long", transf = "none", effect = "time", plotit = TRUE)
- ################################################################################   
+  # Apply emm.test to all dvs variables and save as a matrix in res
   
-  res <- sapply(econ, function(i){
-    test = emm.test(econ = i,df = df,transf = transf, effect = effect, plotit = plotit)
+  # Do the following if there is no covariate
+  
+  if(is.null(covars)){
+  
+  res = sapply(dvs, function(i){
+    
+    test = emm.test(dv = i, 
+                    covar = NULL,
+                    long.dataset = long.dataset, 
+                    effect = effect, 
+                    plots = plots, 
+                    plot.wXh = plot.wXh, 
+                    silent = TRUE)
   })
+  
+  }
+  
+  # Do the following if there is a covariate
+  
+  if(!is.null(covars)){
+    
+    res = mapply(function(i, j){
+      
+      test = emm.test(dv = i, 
+                      covar = j,
+                      long.dataset = long.dataset, 
+                      effect = effect, 
+                      plots = plots, 
+                      plot.wXh = plot.wXh, 
+                      silent = TRUE)
+      
+    }, dvs, covars, SIMPLIFY = FALSE)
+    
+  }
+  
+  # Transpose the res matrix
+  
+  res = t(res)
+  
+  # Define 'means' as the 'emmeans' data
+  # Strip the list of lists with 'do.call' and create a data frame with 'rbind'
+  
+  means = res[,"emmeans"]
+  means = do.call(rbind, means)
+  
+  # Define 'contrasts' as the 'contrasts' data
+  # Strip the list of lists with 'do.call' and create a data frame with 'rbind'
+  
+  contrasts = res[,"contrasts"]
+  contrasts = do.call(rbind, contrasts)
+  
+  # If sav2csv = TRUE we save the means and contrasts data into separate csv files
   
   if(sav2csv == TRUE){
   
   # Save emmeans
   
-  if(effect != "timeXsamp"){cat = effect}
-  if(effect == "timeXsamp"){cat = cbind("time","samp")}
-  cols = cbind("dv", cat,"emmean","SE","df","ci.LL","ci.UL")
-  name = paste0("emmeans_",effect,"_res.csv")
-  
-  write.table(cols,
-              file = here("results","mixed_model_data",name),
+  temp = cbind("dv" = row.names(means), means)
+  row.names(temp) = NULL
+  name = paste("emmeans", effect, "res.csv", sep = "_")
+    
+  write.table(temp,
+              file = here::here("results", "mixed_model_data", name),
               append = F,
               row.names = F,
-              col.names = F,
-              sep=",")
-    
-  for(j in 1:length(econ)){
-    
-    temp = as.data.frame(res["emmeans",][j])
-    dv = rep(econ[j],nrow(temp))
-    temp = cbind(dv, temp)
-    
-    write.table(temp,
-                file = here("results","mixed_model_data",name),
-                append = T,
-                row.names = F,
-                col.names = F,
-                sep=",")
-    
-  }
+              col.names = T,
+              sep = ",")
   
   # Save contrasts
   
-  est = "estimate"
-  if(transf == "log"){est = "ratio"}
-  if(effect == "timeXsamp"){contrast = cbind("contrast","samp")}
-  
-  cols = cbind("dv",
-               "effect",
-               contrast,
-               est,
-               "SE",
-               "df",
-               "tval",
-               "pval",
-               "0.75.ci.LL",
-               "0.75.ci.UL",
-               "0.80.ci.LL",
-               "0.80.ci.UL",
-               "0.85.ci.LL",
-               "0.85.ci.UL",
-               "0.90.ci.LL",
-               "0.90.ci.UL",
-               "0.95.ci.LL",
-               "0.95.ci.UL",
-               "d")
-  
-  name = paste0("contrasts_",effect,"_res.csv")
-  
-  write.table(cols,
-              file = here("results","mixed_model_data",name),
+  temp = cbind("dv" = row.names(contrasts), contrasts)
+  row.names(temp) = NULL
+  name = paste("contrasts", effect, "res.csv", sep = "_")
+    
+  write.table(temp,
+              file = here::here("results", "mixed_model_data", name),
               append = F,
               row.names = F,
-              col.names = F,
-              sep=",")
-  
-  for(j in 1:length(econ)){
-    
-    temp = as.data.frame(res["contrasts",][j])
-    dv = rep(econ[j],nrow(temp))
-    temp = cbind(dv, effect, temp)
-    
-    write.table(temp,
-                file = here("results","mixed_model_data",name),
-                append = T,
-                row.names = F,
-                col.names = F,
-                sep=",")
+              col.names = T,
+              sep = ",")
     
   }
   
-}
-    
+  final = list(
+    emmeans = means,
+    contrasts = contrasts
+  )
   
-  return(res)
+  # Print output if silent = FALSE
+  
+  if(silent == FALSE){
+    print(final)
+  }
+    
+  return(invisible(final))
+  
 }
 
 #-------------------------------------------------------------------------------
 
-lmm.table <- function(sav2csv = TRUE){
+lmm.res <- function(dvs,
+                    long.dataset,
+                    sav2csv = FALSE,
+                    sav2dir,
+                    silent = FALSE){
   
-################################################################################
-# This function reproduces Table 4
-#
-# Example use:
-# lmm.table()
-################################################################################ 
+  # A lazy function that will return the summarized Type III ANOVA table and
+  # follow-up pairewise contrasts of time for the linear mixed model for each
+  # aerobic economy outcome
+  #
+  # dvs: vector of dependent variables defined as character strings
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results as csv files
+  # sav2dir: the directory location relative to the current directory.
+  # silent: a logical indicating whether to return print output
+  #
+  # Example use:
+  # lmm.res(dvs = c("vo2.dv",
+  #                 "pcnt.vo2.dv",
+  #                 "hr.dv",
+  #                 "rpe.dv"), 
+  #         long.dataset = dat.econ.long, 
+  #         sav2csv = TRUE, 
+  #         sav2dir = c("results", "tables", "table4.csv"))
+  #
+  # Begin script
   
-  # Extract fixed effects
-  
-  ffx = mixed.model.res(econ = econ, df = "dat.econ.long", transf = "none", sav2csv = TRUE)
+  ffx = 
+    mixed.mod.res(dvs = dvs, 
+                  covars = NULL, 
+                  long.dataset = long.dataset, 
+                  transf = "none", 
+                  sav2csv = FALSE,
+                  silent = TRUE)
   
   ffx.vo2 = as.data.frame(ffx$vo2.dv)
   ffx.pcnt.vo2 = as.data.frame(ffx$pcnt.vo2.dv)
   ffx.hr = as.data.frame(ffx$hr.dv)
   ffx.rpe = as.data.frame(ffx$rpe)
-  
-  toy <- function(ffx.var, name){
+    
+  dothis <- function(ffx.var, name){
     var = name
     col0 = rownames(ffx.var)
     col1 = sprintf("%.2f", ffx.var$`Sum Sq`)
@@ -1689,24 +2101,29 @@ lmm.table <- function(sav2csv = TRUE){
   }
   
   res = 
-  rbind(
-    toy(ffx.vo2, "vo2"),
-    toy(ffx.pcnt.vo2, "pcnt.vo2"),
-    toy(ffx.hr, "hr"),
-    toy(ffx.rpe, "rpe")
-  )
+    rbind(
+      dothis(ffx.vo2, "vo2"),
+      dothis(ffx.pcnt.vo2, "pcnt.vo2"),
+      dothis(ffx.hr, "hr"),
+      dothis(ffx.rpe, "rpe"))
    
   # Extract emmeans for time (T1-T0)
   
   emm = 
-  emm.test.res(econ = econ, df = "dat.econ.long", transf = "none", effect = "time", plotit = FALSE)
-
-  emm.vo2 = as.data.frame(emm[,"vo2.dv"]$contrasts)
-  emm.pcnt.vo2 = as.data.frame(emm[,"pcnt.vo2.dv"]$contrasts)
-  emm.hr = as.data.frame(emm[,"hr.dv"]$contrasts)
-  emm.rpe = as.data.frame(emm[,"rpe.dv"]$contrasts)
+    emm.test.res(dvs = dvs, 
+                 long.dataset = long.dataset, 
+                 covars = NULL, 
+                 effect = "time", 
+                 plots = FALSE, 
+                 sav2csv = FALSE, 
+                 silent = TRUE)
+  
+  emm.vo2 = emm$contrasts["vo2.dv",]
+  emm.pcnt.vo2 = emm$contrasts["pcnt.vo2.dv",]
+  emm.hr = emm$contrasts["hr.dv",]
+  emm.rpe = emm$contrasts["rpe.dv",]
       
-  toy2 <- function(emm.var, name){
+  andthis <- function(emm.var, name){
     var = name
     col0 = "T1-T0"
     col1 = sprintf("%.2f [%.2f, %.2f]", emm.var$estimate, emm.var$ci.0.95.lower.CL, emm.var$ci.0.95.upper.CL)
@@ -1724,58 +2141,85 @@ lmm.table <- function(sav2csv = TRUE){
   
   res2 = 
     rbind(
-      toy2(emm.vo2, "vo2"),
-      toy2(emm.pcnt.vo2, "pcnt.vo2"),
-      toy2(emm.hr, "hr"),
-      toy2(emm.rpe, "rpe")
+      andthis(emm.vo2, "vo2"),
+      andthis(emm.pcnt.vo2, "pcnt.vo2"),
+      andthis(emm.hr, "hr"),
+      andthis(emm.rpe, "rpe")
     )
   
-  table4 =
-  as.data.frame(
-  rbind(res[c(1:3),],res2[1,],
-        res[c(4:6),],res2[2,],
-        res[c(7:9),],res2[3,],
-        res[c(10:12),],res2[4,])
-  )
+  final = 
+    as.data.frame(rbind(
+      res[c(1:3),],res2[1,],
+      res[c(4:6),],res2[2,],
+      res[c(7:9),],res2[3,],
+      res[c(10:12),],res2[4,]))
   
   if(sav2csv == TRUE){
     
-    write.table(table4,
-                file = here("results","mixed_model_data","table4.csv"),
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
+    
+    write.table(final,
+                file = dir,
                 append = F,
                 row.names = T,
                 col.names = T,
                 sep=",")
   }
-    
-  return(table4)
+  
+  if(silent == FALSE){
+    print(final)
+  }
+  
+  return(invisible(final))
 
 }
 
-
 #-------------------------------------------------------------------------------
 
-supp.lmm <- function(sav2csv = TRUE){
+lmm.supp.res <- function(dvs, 
+                         long.dataset, 
+                         sav2csv = FALSE, 
+                         sav2dir, 
+                         silent = FALSE){
   
-################################################################################
-# This function reproduces follow-up contrasts of each LMM at multiple confidence 
-# limits. This is Supplementary Results Table 2
-#
-# Example use:
-# supp.lmm()
-################################################################################ 
+  # A lazy function that will return the follow-up contrasts of time for each 
+  # lmm with confidence limits ranging from 80-95%. 
+  #
+  # dvs: vector of dependent variables defined as character strings
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results as csv files
+  # sav2dir: the directory location relative to the current directory.
+  # silent: a logical indicating whether to return print output
+  #
+  # Example use:
+  # lmm.supp.res(dvs = c("vo2.dv",
+  #                      "pcnt.vo2.dv",
+  #                      "hr.dv",
+  #                      "rpe.dv"), 
+  #              long.dataset = dat.econ.long, 
+  #              sav2csv = TRUE, 
+  #              sav2dir = c("results", "tables", "supp_table2.csv"))
+  #
+  # Begin script
   
   # Extract emmeans for time (T1-T0)
   
   emm = 
-    emm.test.res(econ = econ, df = "dat.econ.long", transf = "none", effect = "time", plotit = FALSE)
+    emm.test.res(dvs = dvs, 
+                 long.dataset = long.dataset, 
+                 covars = NULL, 
+                 effect = "time", 
+                 plots = FALSE, 
+                 sav2csv = FALSE, 
+                 silent = TRUE)
   
-  emm.vo2 = as.data.frame(emm[,"vo2.dv"]$contrasts)
-  emm.pcnt.vo2 = as.data.frame(emm[,"pcnt.vo2.dv"]$contrasts)
-  emm.hr = as.data.frame(emm[,"hr.dv"]$contrasts)
-  emm.rpe = as.data.frame(emm[,"rpe.dv"]$contrasts)
+  emm.vo2 = emm$contrasts["vo2.dv",]
+  emm.pcnt.vo2 = emm$contrasts["pcnt.vo2.dv",]
+  emm.hr = emm$contrasts["hr.dv",]
+  emm.rpe = emm$contrasts["rpe.dv",]
   
-  toy2 <- function(emm.var, name){
+  dothis <- function(emm.var, name){
     var = name
     col0 = sprintf("%.2f", emm.var$estimate)
     col1 = sprintf("[%.2f, %.2f]", emm.var$ci.0.8.lower.CL, emm.var$ci.0.8.upper.CL)
@@ -1794,12 +2238,15 @@ supp.lmm <- function(sav2csv = TRUE){
   
   # Extract emmeans for sample at each timepoint for pcnt.vo2 (T1-T0)
   
-  emm.int = 
-    emm.test.res(econ = "pcnt.vo2.dv", df = "dat.econ.long", transf = "none", effect = "timeXsamp", plotit = FALSE)
+  pcnt.vo2.int = 
+    emm.test.res(dv = "pcnt.vo2.dv", 
+                 long.dataset = long.dataset, 
+                 effect = "timeXsamp", 
+                 plots = FALSE, 
+                 sav2csv = FALSE, 
+                 silent = TRUE)$contrasts
   
-  pcnt.vo2.int = as.data.frame(emm.int["contrasts",])
-  
-  toy3 <- function(emm.var.int, name){
+  alsothis <- function(emm.var.int, name){
     var = name
     col0 = rbind(
       sprintf("%.2f", emm.var.int$estimate[1]),
@@ -1844,42 +2291,66 @@ supp.lmm <- function(sav2csv = TRUE){
   
   res2 = 
     rbind(
-      toy2(emm.vo2, "vo2.time"),
-      toy2(emm.pcnt.vo2, "pcnt.vo2.time"),
-      toy3(pcnt.vo2.int, "pcnt.vo2.int"),
-      toy2(emm.hr, "hr.time"),
-      toy2(emm.rpe, "rpe.time")
+      dothis(emm.vo2, "vo2.time"),
+      dothis(emm.pcnt.vo2, "pcnt.vo2.time"),
+      alsothis(pcnt.vo2.int, "pcnt.vo2.int"),
+      dothis(emm.hr, "hr.time"),
+      dothis(emm.rpe, "rpe.time")
     )
   
   if(sav2csv == TRUE){
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
     
     write.table(res2,
-                file = here("results","mixed_model_data","supp_lmm.csv"),
+                file = dir,
                 append = F,
                 row.names = F,
                 col.names = T,
                 sep=",")
   }
   
-  return(as.data.frame(res2))
+  res2 = as.data.frame(res2)
+  
+  if(silent == FALSE){
+    print(res2)
+  }
+  
+  return(invisible(res2))
   
 }
 
 #-------------------------------------------------------------------------------
 
-supp.model <- function(ae.var, sav2csv = TRUE){
+supp.model <- function(dv,                          
+                       long.dataset, 
+                       sav2csv = FALSE, 
+                       sav2dir, 
+                       silent = FALSE){
  
-################################################################################
-# This function reproduces the full model for each LMM. This is Supplementary
-# Results Tables 3-6
-#
-# Example use:
-# supp.model()
-################################################################################ 
+  # This function will report model comparison results, beta estimates, and model 
+  # variance for the LMM specified by 'dv' in an APA-like table. 
+  #
+  # dv: dependent variable name as string
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results as csv files
+  # sav2dir: the directory location relative to the current directory.
+  # silent: a logical indicating whether to return print output
+  #
+  # Example use:
+  # supp.model(dv = "vo2.dv", 
+  #            long.dataset = dat.econ.long, 
+  #            sav2csv = TRUE, 
+  #            sav2dir = c("results", "tables", "supp_table3.csv"))
+  #
+  # Begin script
    
-  x = mixed.mod(econ = ae.var,df = "dat.econ.long",transf = "none")
+  x = mixed.mod(dv = dv, 
+                long.dataset = long.dataset, 
+                transf = "none", 
+                silent = TRUE)
   
-  cleanup <- function(ffx.var){
+  dothis <- function(ffx.var){
     
     # Random effects model fit
     
@@ -1926,15 +2397,19 @@ supp.model <- function(ae.var, sav2csv = TRUE){
                 variance = as.data.frame(temp)))
   }
   
-  res = cleanup(x)
+  res = dothis(x)
   
   if(sav2csv == TRUE){
     
-    write.table(NULL, file = here("results","mixed_model_data",paste0(ae.var,"_supp.csv")))
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
+    
+    write.table(NULL, 
+                file = dir)
     
     sapply(names(res), function(i){
       write.table(res[i],
-                  file = here("results","mixed_model_data",paste0(ae.var,"_supp.csv")),
+                  file = dir,
                   append = T,
                   row.names = T,
                   col.names = F,
@@ -1944,381 +2419,325 @@ supp.model <- function(ae.var, sav2csv = TRUE){
     
   }
   
+  if(silent == FALSE){
+    print(res)
+  }
   
-  
-  return(res)
+  return(invisible(res))
   
   
 }
 
 #-------------------------------------------------------------------------------
 
-safeguard.ES <- function(dv = "pss", df){
+safeguard.es <- function(dv, 
+                         long.dataset, 
+                         type = c("dz","dav"), 
+                         silent = FALSE){
+
+  # This function computes a safeguard effect size for paired data based on
+  # Cohen's dz or Cohen's dav. The safeguard effect size is the lower limit of 
+  # a 1-sided 80% confidence interval. For completement, the function reports 
+  # the lower limits of 1-sided 80-95% confidence intervals. 
+  #
+  # dv: dependent variable name as string
+  # long.dataset: data frame containing the variables in long format
+  # type: one of 'dz' or 'dav' to specify which effect the safeguard effect size
+  # is computed for
+  # silent: a logical indicating whether to print or suppress print output
+  #
+  # Example use:
+  # safeguard.es(dv = "pss", long.dataset = dat.long, type = "dz", silent = TRUE)$ci.LL_0.80
+
+  # Reshape long dataset into wide dataset
   
-################################################################################
-# This function computes a safeguard effect size for Cohen's dz (Cohen's d 
-# computed with mean gain score divided by standard deviation of gain scores).
-# It will return the lower limit for an 80%-85% 1-sided CI on dz.
-# It will also return the margin-of-error (MoE) suggested to be targeted for
-# each dz value, which is just dz/2
-#
-# Example use:
-# safeguard.ES(dv = "pss", df = "dat.wide")
-################################################################################ 
-
-  # Define variables
-
-  t0 <- eval(parse(text = paste(df,"$",dv,".0", sep ="")))
-  t1 <- eval(parse(text = paste(df,"$",dv,".1",sep = "")))
-  ch <- t1-t0
-
-  # Compute descriptives
-
-  mu = mean(ch)
-  sdev = sd(ch)
-  n = length(ch)
-  df = n-1
-  dz = mu/sdev
-  tval = as.numeric(t.test(ch, mu = 0)$statistic)
-
-  # Compute lower limit 75% to 95% CI on dz
-
-  # conf.limits.nct is part of the MBESS package
-  # Kelley, K. (2018). MBESS: The MBESS R Package. R package version 4.4.3. 
-  # Retrieved from https://CRAN.R-project.org/package=MBESS
+  dat.wide <- reshape(long.dataset, idvar = "id", timevar = "time", direction = "wide")
   
-  dz.LL =
-    sapply(seq(0.80,0.95,0.05), function(j){
-      x = 1-(2*j) # compute a 1-sided confidence interval
-      limits = conf.limits.nct(df = df, t.value = tval, conf.level = x)
-      dz.ci <- c(limits$Lower.Limit/sqrt(n),limits$Upper.Limit/sqrt(n))
-      dz.ci.LL <- dz.ci[which.min(abs(dz.ci))]
-      dz.ci.LL
-    })
-
-  dz.LL = c(dz, dz.LL)
-  MoE = abs(dz.LL/2)
-  dz.LL = as.data.frame(dz.LL)
-  row.names(dz.LL) <- c("est",seq(0.80,0.95,0.05))
-  res = cbind(dz.LL, MoE)
-
-  return(res)
+  # Define pre (t0) and post (t1) variables
   
-}
-
-#-------------------------------------------------------------------------------
-
-aipe.assurance <- function(d,
-                           w = d/2,
-                           reps = 2000,
-                           n.seq = c(10,200,1),
-                           effect = c("dz", "ds"),
-                           plotit = TRUE,
-                           sav2csv = TRUE,
-                           seed = FALSE){
-
-################################################################################  
-# This function computes the sample size required to attain a pre-specified 
-# 95% CI half-width (i.e., margin-of-error) for a given d value with 99% 
-# assurance. Accommodates dz (paired d) and ds (two sample d). 
-#
-# w is the margin-of-error. This defaults to d/2 if not specified.
-#
-# reps specified the number of iterations for each sample size simulation. 
-#
-# n.seq refers to the sequence of sample sizes to be assessed. Defaults to 
-# c(10,200,1), which assesses n = 10 to n = 200 in increments of 1.
-#
-# seed = TRUE if you want a reproducible result each time you run the function.
-#
-# Example use:
-# aipe.assurance(d = 0.5, reps = 2000, n.seq = c(10,200,1), effect = "dz", seed = TRUE)
-################################################################################  
+  x = paste0(dv,".0")
+  y = paste0(dv,".1")
   
-  # Exit if effect is not dz or ds
+  t0 = get(x, dat.wide)
+  t1 = get(y, dat.wide)
   
-  if(effect != "dz" && effect != "ds"){
-    return(print("Please specify effect as 'dz' or 'ds'"))
+  # Define a function to compute descriptive and inferential statistics for
+  # the t1-t0 gain score data
+  
+  gain <- function(i,j){
+    ch = i-j
+    n = length(ch)
+    r = stats::cor(i, j, method = "pearson")
+    mu = mean(ch)
+    sdev = sd(ch)
+    sdev.av = sqrt((sd(i)^2+sd(j)^2)/2)
+    min = min(ch)
+    max = max(ch)
+    test = stats::t.test(ch, mu = 0)
+    tval = as.numeric(test$statistic)
+    df= as.numeric(test$parameter)
+    pval = as.numeric(test$p.value)
+    dz = mu/sdev
+    dav = mu/sdev.av
+    cl.ES = 1 - pnorm(mu/sdev)
+    r.pval = trimpb(x = i-j, tr = 0.2, nboot = 2000, pr = FALSE)$p.value
+    
+    return(list(n = n, 
+                r = r, 
+                mu = mu, 
+                sdev = sdev, 
+                sdev.av = sdev.av, 
+                min = min, 
+                max = max,
+                tval = tval,
+                df = df,
+                pval = pval,
+                r.pval = r.pval,
+                dz = dz,
+                dav = dav,
+                cl.ES = cl.ES))
+    
   }
   
-  # Exit if n.seq is incorrectly specified
+  gain.res = gain(t1,t0)
   
-  if(length(n.seq) != 3){
-    return(print("Please specify n.seq correctly. E.g., c(10,200,1)"))
-  }
+  # Define a function to compute 80-95% 1-sided confidence limits on dz and dav
   
-  # Define start, fin, and increm. 
-  
-  if(n.seq[1] < 5){n.seq[1] = 5}
-  start = n.seq[1]
-  fin = n.seq[2]
-  increm = n.seq[3]
-  
-  # Define w as a positive number
-  
-  w = abs(w)
-  
-  # Set the seed for reproducible analyses
-  
-  if(seed == TRUE){set.seed(2)}
-  
-  print(sprintf("Simulating n = %s to n = %s in increments of %s with %s iterations",
-                start, 
-                fin, 
-                increm,
-                reps))
-
+  dci <- function(d, n, tval, df, sdev, sdev.av, type = c("dz","dav")){
     
-  # Run this if dz is specified
-  
-  # pbsapply() is part of the pbapply package:
-  # Peter Solymos and Zygmunt Zawadzki (2019). pbapply: Adding Progress Bar
-  # to '*apply' Functions. R package version 1.4-0.
-  # https://CRAN.R-project.org/package=pbapply
-  
-    if(effect == "dz"){
-
-    res <- pbsapply(seq(start,fin,increm),function(i){
+    if(type == "dz"){
       
-      # The replicate function will replicate an experiment 'reps' times and
-      # compute w.obt from each experiment. E.g., if reps = 100, the est 
-      # variable will be a vector of 100 values of w.obt from 100 random 
-      # experiments. 
-      
-      est <- replicate(n = reps, expr = {
-        y = rnorm(n = i, mean = d, sd = 1)
-        dz.ci = quiet(ci.sm(sm = mean(y)/sd(y), N = i))
-        w.obt = (dz.ci$Upper.Conf.Limit.Standardized.Mean-
-          dz.ci$Lower.Conf.Limit.Standardized.Mean)/2
-        w.obt
-      })
-      
-      # Sapply will run the replication by drawing samples starting at n = start 
-      # to n = fin, in increments of n = increm. It will compute the long run 
-      # probabability across your replicates that w.obt is less than or equal to 
-      # a desired w for each sample size. 
-      
-      # It will combine sample size and probability of est <= w in a matrix and save
-      # these in the variable res. This can then be plotted. 
-      
-      lr.prob <- sum(est <= w)/reps
-      lr.prob.res <- cbind(i,lr.prob)
-      lr.prob.res
-      
-    })
-    }
-    
-  # Run this if dz is specified
-  
-    if(effect == "ds"){
-      
-      res <- pbsapply(seq(start,fin,increm),function(i){
-        
-        est <- replicate(n = reps, expr = {
-            x1 <- rnorm(i, 0, 1)
-            x2 <- rnorm(i, d, 1)
-            tval = t.test(x1, x2, var.equal = TRUE)$statistic
-            d.ci = ci.smd(ncp = tval, n.1 = i, n.2 = i)
-            w.obt = (d.ci$Upper.Conf.Limit.smd-
-                     d.ci$Lower.Conf.Limit.smd)/2
-            w.obt
+      res1 = 
+        sapply(seq(0.80, 0.95, 0.05), function(i){
+          conf = i*2-1
+          res = quiet(as.numeric(MBESS::ci.sm(sm = d, N = n, conf.level = conf))[c(1,3)])
+          res[which.min(abs(res))]
         })
-        
-        lr.prob <- sum(est <= w)/reps
-        lr.prob.res <- cbind(i,lr.prob)
-        lr.prob.res
       
-    })
+      res2 = as.list(res1)
+      names = format(seq(0.80, 0.95, 0.05), nsmall = 2)
+      names(res2) = paste("ci.LL", names, sep = "_")
+      return(res2)
       
     }
+    
+    if(type == "dav"){
       
-  # Plot the results and save them
-  
-  # pretty_breaks is part of the scales package:
-  # Hadley Wickham (2018). scales: Scale Functions for Visualization. R
-  # package version 1.0.0. https://CRAN.R-project.org/package=scales
-  
-    if(plotit == TRUE){
-    
-    # Plot the result
-  
-    res.plot = as.data.frame(cbind(y = res[2,],x = res[1,]))
-    x11()
-    pl = 
-    ggplot(data = res.plot, aes(x = x, y = y)) +
-      geom_point() + 
-      geom_line() +
-      scale_y_continuous(breaks = scales::pretty_breaks(n = 20), name = paste0("Long-run probability that w.obt <= w (replications =",reps,")")) +
-      scale_x_continuous(breaks = scales::pretty_breaks(n = 20), name = paste("Sample size")) +
-      ggtitle(paste0("Planning for precision with d = ",round(d,3)," (w = ",round(w,3),")")) +
-      theme_light()
-    
-    print(pl)
-    
-    # Save plot as eps file
-    sapply(c(".eps",".png"), function(i){
-      plotname = paste0(abs(round(d,2)),"_",effect,"_aipe",i)
-      ggsave(here("plots","precision_power", plotname), plot = pl, width = 7, height = 5, units = "in")
-    })
-    
-    
+      res1 =
+        sapply(seq(0.80,0.95,0.05), function(i){
+          conf = i*2-1
+          limits <- quiet(MBESS::conf.limits.nct(df = df, t.value = tval, conf.level = conf))
+          ci.LL <- (limits$Lower.Limit*sdev)/(sdev.av*sqrt(n))
+          ci.UL <- (limits$Upper.Limit*sdev)/(sdev.av*sqrt(n))
+          res = c(ci.LL, ci.UL)
+          res[which.min(abs(res))]
+        })
+      
+      res2 = as.list(res1)
+      names = format(seq(0.80, 0.95, 0.05), nsmall = 2)
+      names(res2) = paste("ci.LL", names, sep = "_")
+      return(res2)
+      
     }
-  
-  # Restructure res for a nice output
-  
-  res = as.data.frame(t(res))
-  colnames(res) = c("n","power")
-
-  if(sav2csv == TRUE){
-    
-    name = paste0(abs(round(d,2)),"_",effect, "_aipe.csv")
-    
-    write.table(res,
-                file = here("results","precision_power",name),
-                append = F,
-                row.names = F,
-                col.names = T,
-                sep=",")
-    
   }
   
-  # Define a function that returns the first n where long-run probability that
-  # w <= d/2 is equal to 1 (approximately 99% assurance)
+  # Compute 1-sided 80-95% confidence limits on dz and dav
   
-  find.n <- function(i){
-    
-    rank = which(i$power == 1)[1]
-    n = i$n[rank]
-    
-    return(n = round(n))
-    
+  dav.ci = dci(d = gain.res$dav, 
+               n = gain.res$n, 
+               tval = gain.res$tval, 
+               df = gain.res$df, 
+               sdev = gain.res$sdev, 
+               sdev.av = gain.res$sdev.av, 
+               type = "dav")
+  
+  dz.ci = dci(d = gain.res$dz,
+              n = gain.res$n, 
+              type = "dz")
+  
+  
+  if(type == "dz"){final = dz.ci}
+  if(type == "dav"){final = dav.ci}
+  
+  if(silent == FALSE){
+    print(final)
   }
   
-  # Apply find.n function to your result to return n required with 99% assurance
+  return(invisible(final))
   
-  est.n = find.n(res)
-  
-    
-  return("n" = est.n)
-  }
+}
 
 #-------------------------------------------------------------------------------
 
-precPLOT.pair <- function(pr = TRUE){
+aipe.d <- function(d, 
+                   moe = abs(d/2), 
+                   type = c("dz","ds"),
+                   conf.level = 0.95, 
+                   assurance = 0.99, 
+                   retention.rate, 
+                   silent = FALSE){
   
-################################################################################ 
-# This function generates a plot of sample size curves for the AIPE sample size
-# analysis with assurance (dz only)
-#
-# Example use:
-# precPLOT.pair()
-################################################################################ 
-   
-  # Label x coordinates @ 50% power
+  if(type == "dz"){
+    n = MBESS::ss.aipe.sm(sm = abs(d),
+                          width = moe*2, 
+                          conf.level = conf.level, 
+                          assurance = assurance)
+  }
   
-  label.60 =
-    which(round(dz_aipe_0.60$power,2) > 0.5 & round(dz_aipe_0.60$power,2) < 0.7)[1]
-  label.60 = dz_aipe_0.60$n[label.60]
+  if(type == "ds"){
+    n = MBESS::ss.aipe.smd(delta = d, 
+                           width = moe*2, 
+                           conf.level = conf.level,
+                           assurance = assurance)
+    
+  }
   
-  label.37 =
-    which(round(dz_aipe_0.37$power,2) > 0.5 & round(dz_aipe_0.37$power,2) < 0.7)[1]
-  label.37 = dz_aipe_0.37$n[label.37]
+  n.adj = ceiling(n/retention.rate)
   
-  pl =
-  ggplot() + 
-    geom_point(data = dz_aipe_0.60, aes(x = n, y = power)) +
-    geom_line(data = dz_aipe_0.60, aes(x = n, y = power)) +
-    geom_point(data = dz_aipe_0.37, aes(x = n, y = power)) +
-    geom_line(data = dz_aipe_0.37, aes(x = n, y = power), linetype = 2) +
-    scale_y_continuous(breaks = scales::pretty_breaks(n = 20), 
-                       name = expression(paste("Long-run probability that ",
-                                               italic("MoE") <= "half of ", delta[z]))) + 
-    scale_x_continuous(breaks = scales::pretty_breaks(n = 20), name = paste("Sample size")) +
-    ggtitle(paste0("Planning for precision")) +
-    geom_label(aes(x = label.60, y = 0.55), label = expression(paste(delta[z],
-                                                               "= -0.60"))) +
-    geom_label(aes(x = label.37, y = 0.55), label = expression(paste("Safeguard ",delta[z],
-                                                                "= -0.37"))) +
-    theme_light()
+  final = 
+    cbind(d = d,
+         moe = moe,
+         n = n,
+         n.adj = n.adj)
   
-  sapply(c(".eps",".png"), function(i){
-    plotname = paste0("precPLOT_pair",i)
-    ggsave(here("plots","precision_power", plotname), plot = pl, width = 7, height = 5, units = "in")
+  rownames(final) = type
+  
+  if(silent == FALSE){
+    print(final)
+  }
+  
+  return(invisible(final))
+  
+}
+
+#-------------------------------------------------------------------------------
+
+aipe.mult.d <- function(dvals,                    
+                        type = c("dz","ds"),
+                        conf.level = 0.95, 
+                        assurance = 0.99, 
+                        retention.rate, 
+                        return.order.d = "descending",
+                        silent = FALSE){
+  
+  if(return.order.d == "ascending"){decreasing = FALSE}
+  if(return.order.d == "descending"){decreasing = TRUE}
+  
+  dvals = dvals[order(dvals, decreasing = decreasing)]
+  
+  res = 
+  sapply(dvals, function(i){
+    
+    aipe.d(d = i, 
+           type = type, 
+           conf.level = conf.level, 
+           assurance = assurance, 
+           retention.rate = retention.rate, 
+           silent = TRUE)
+    
   })
   
-  if(pr == TRUE){print(pl)}
+  res = as.data.frame(t(res))
+  colnames(res) = c("d", "moe", "n", "n.adj")
+  names = paste0(type, 1:length(res$d))
+  rownames(res) = names
+  
+  if(silent == FALSE){
+    print(res)
+  }
+  
+  return(invisible(res))
   
 }
 
 #-------------------------------------------------------------------------------
 
-aipe.res <- function(retention.rate = 0.7083, trial.reps = 10, assurance = 0.99, sav2csv = TRUE){
+aipe.table <- function(retention.rate = 0.71, 
+                       n.trial = 10, 
+                       max.per.trial = 20, 
+                       sav2csv = FALSE, 
+                       sav2dir){
   
-################################################################################ 
-# This function reproduces Table 5
-#
-# Example use:
-# aipe.res()
-################################################################################ 
+  res1 = 
+  aipe.d(d = -0.6, 
+         type = "dz",
+         conf.level = 0.95, 
+         assurance = 0.99, 
+         retention.rate = retention.rate, 
+         silent = TRUE)
   
-  find.n <- function(i){
+  res2 = 
+  aipe.d(d = -0.37, 
+         type = "dz",
+         conf.level = 0.95, 
+         assurance = 0.99, 
+         retention.rate = retention.rate, 
+         silent = TRUE)
+  
+  s1 = as.data.frame(rbind(res1, res2))
+  
+  s2 = 
+    aipe.mult.d(dvals = seq(0.2, 0.8, 0.1), 
+                type = "ds", 
+                conf.level = 0.95, 
+                assurance = 0.99, 
+                return.order.d = "descending",
+                retention.rate = retention.rate, 
+                silent = TRUE)
+  
+  dothis <- function(i, type = c("paired", "two.sample")){
     
-    rank = which.min(abs(i$power-assurance))
-    n = i$n[rank]
-    adj.n = n/retention.rate
+    pow.n = 
+      sapply(i$d, function(j){
+        n = pwr::pwr.t.test(d = j, sig.level = 0.05, power = 0.8, type = type)$n
+        n = ceiling(n)
+        })
     
-    return(list(n = round(n), adjusted.n = round(adj.n)))
+    pow.n.adj = pow.n/retention.rate
+    
+    req.pr = ceiling(i$n.adj/n.trial)
+    feas.pr = req.pr <= max.per.trial
+    
+    req.po = ceiling(pow.n.adj/n.trial)
+    feas.po = req.po <= max.per.trial
+    
+    final = as.data.frame(
+      cbind(req.pr, feas.pr, pow.n, pow.n.adj, req.po, feas.po))
+    
+    return(final)
     
   }
-  
-  res = t(cbind(
-    "dz_0.60" = find.n(dz_aipe_0.60),
-    "dz_0.37" = find.n(dz_aipe_0.37),
-    "ds_0.8" = find.n(ds_aipe_0.8),
-    "ds_0.7" = find.n(ds_aipe_0.7),
-    "ds_0.6" = find.n(ds_aipe_0.6),
-    "ds_0.5" = find.n(ds_aipe_0.5),
-    "ds_0.4" = find.n(ds_aipe_0.4),
-    "ds_0.3" = find.n(ds_aipe_0.3),
-    "ds_0.2" = find.n(ds_aipe_0.2)
-  ))
-  
-  required.n = ceiling(as.numeric(res[,"adjusted.n"])/trial.reps)
-  
-  moe = rbind(
-    0.30, 
-    0.19,
-    0.40,
-    0.35,
-    0.3,
-    0.25,
-    0.2,
-    0.15,
-    0.1
-  )
-  
-  res = cbind(moe, res, required.n)
-  colnames(res) = c("MoE", "N", "N Adjusted","Recruitment Rate")
+
+  temp1 = rbind(s1,s2)
+  temp2 = rbind(dothis(s1, "paired"), dothis(s2, "two.sample"))
+  temp3 = cbind(temp1, temp2)
+  temp3$feas = temp3$feas.pr + temp3$feas.po
+  temp3$feas[temp3$feas == 2] <- "Yes"
+  temp3$feas[temp3$feas == 1] <- "*Yes"
+  temp3$feas[temp3$feas == 0] <- "No"
+
+  final = temp3[c(1:5,11)]
   
   if(sav2csv == TRUE){
     
-    temp = res
-    temp = cbind(rownames(temp),temp)
-    colnames(temp)[1] = "d"
-
-    write.table(temp,
-                file = here("results","precision_power","table_5.csv"),
-                append = F,
-                row.names = F,
-                col.names = T,
-                sep=",")
+    temp = cbind("type" = rownames(final), final)
+    rownames(temp) = NULL
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
+    
+    utils::write.table(temp,
+                       file = dir,
+                       append = F,
+                       row.names = F,
+                       col.names = T,
+                       sep=",")
     
   }
   
-  return(as.data.frame(res))
+ return(final)
   
 }
-
+  
 #-------------------------------------------------------------------------------
 # End script
 #-------------------------------------------------------------------------------

@@ -1,1 +1,0 @@
-This directory is part of the directory hierarchy for this project and is required for the scripts to work correctly. 

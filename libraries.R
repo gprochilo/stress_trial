@@ -8,7 +8,7 @@ library(lmerTest)
 library(MASS)
 library(emmeans)
 library(ggpubr)
-library(boot)
-library(pbapply)
 library(here)
-library(kableExtra) # for R Markdown
+library(pwr)
+library(devtools)
+library(DT) # for R Markdown tables

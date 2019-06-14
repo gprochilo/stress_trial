@@ -1,0 +1,669 @@
+---
+title: "The Effects of a 16-week Aerobic Exercise and Mindfulness-based Intervention on Chronic Psychosocial Stress: A Nonrandomized Pilot and Feasibility Trial"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+author: "Guy A. Prochilo"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!----------------------------------------------------------------------------->
+<!-- Begin --> 
+
+This R Markdown report reproduces the results found in the above manuscript.
+
+_Note_: data from the original publication are not publicly available on the advice of the Monash University Human Research Ethics Committee. This is because the approved ethics application did not include provisions for public access to data. The deidentified data are available from the corresponding author, upon a reasonable request. 
+
+_Note_: tables generated in this R Markdown report can be reproduced inside an R environment using the commands preceding each table. However, tables in this report have been formatted for presentation purposes using the datatable::datatable() function. See the raw R Markdown code in `rm_report.Rmd` for details.
+
+<!----------------------------------------------------------------------------->
+<!-- Prepare R Session --> 
+
+# Prepare R Session
+
+**1. Load and attach required packages**
+
+* R Markdown will load and attach the required packages by sourcing the `libraries.R` file
+* Robust statistical analysis scripts are sourced from the Rallfun-v35 script file
+  * Wilcox, R. R. (2018). Rallfun-v35. Retrieved from https://dornsife.usc.edu/labs/rwilcox/software/
+
+```{r results='hide', message=FALSE, warning=FALSE}
+source("libraries.R")
+source("Rallfun-v35.txt")
+```
+
+**2. Import data**
+
+* R Markdown will source the `import_data.R` script file
+* This file imports the study data and sorts it into a form required for analysis. This includes:
+  * Sorting data into long and wide format
+  * Defining variable classes
+  * Removing data with incomplete cases for analysis of aerobic economy
+* This file also imports the results of an accuracy in parameter estimation sample size analysis which have been computed via simulation
+
+```{r eval=TRUE}
+source("import_data.R")
+```
+
+**3. Source the analysis scripts**
+
+* R Markdown will source the analysis script file for this project: `ProchFun_stress-v1.R`
+* This file includes all scripts required for reproducing all analyses
+
+```{r eval=TRUE}
+source("ProcFun_stress-v1.R")
+```
+
+<!----------------------------------------------------------------------------->
+<!-- In-text Tables --> 
+
+# In-text Tables
+
+## Table 1
+
+* Reproduce Table 1: Baseline demographic characteristics of participants
+
+```{r, eval=FALSE, echo=TRUE}
+baseline.res(sav2csv = TRUE, sav2dir = c("results","tables","table1.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m = baseline.res(sav2csv = TRUE, sav2dir = c("results","tables","table1.csv"), silent = TRUE)
+
+datatable(
+  m, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
+```
+
+## Table 2 
+
+* Reproduce Table 2: Summarized dosage results 
+
+```{r, eval=FALSE, echo=TRUE}
+  descrip.res(dvs = c("attendance.pcnt.1", 
+                      "meditation.tot.1", 
+                      "runs.tot.1", 
+                      "mean.pcnt.vo2max.1", 
+                      "distance.km.tot.1", 
+                      "runtime.tot.1"), 
+              dataset = dat.wide, 
+              sav2csv = TRUE, 
+              sav2dir = c("results","tables","table2.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   descrip.res(dvs = c("attendance.pcnt.1", 
+                      "meditation.tot.1", 
+                      "runs.tot.1", 
+                      "mean.pcnt.vo2max.1", 
+                      "distance.km.tot.1", 
+                      "runtime.tot.1"), 
+              dataset = dat.wide, 
+              sav2csv = TRUE, 
+              sav2dir = c("results","tables","table2.csv"), 
+              silent = TRUE)
+
+datatable(
+  m, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
+
+```
+
+## Table 3
+
+* Reproduce Table 3: Summarized results for pre-test (T0), post-test (T1), and gains (T1-T0) for psychosocial stress factors, mindfulness, emotion regulation factors, and maximal aerobic capacity
+
+```{r, eval=FALSE}
+pair.test.table(dvs = c("pss",
+                          "sdass",
+                          "adass",
+                          "ddass",
+                          "who",
+                          "maas",
+                          "erq.cr",
+                          "rrs.br",
+                          "pswq",
+                          "vo2max"), 
+                  long.dataset = dat.long, 
+                  sav2csv = TRUE, 
+                  sav2dir = c("results", "tables", "table3.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   pair.test.table(dvs = c("pss",
+                          "sdass",
+                          "adass",
+                          "ddass",
+                          "who",
+                          "maas",
+                          "erq.cr",
+                          "rrs.br",
+                          "pswq",
+                          "vo2max"), 
+                  long.dataset = dat.long, 
+                  sav2csv = TRUE, 
+                  sav2dir = c("results", "tables", "table3.csv"), 
+              silent = TRUE)
+
+datatable(
+  m, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
+
+```
+
+## Table 4
+
+* Reproduce Table 4: Summarized Type III ANOVA table and follow-up pairwise contrasts of the linear mixed model (fit by REML) for each aerobic economy outcome. F and t tests use Satterthwaite's degrees of freedom.
+
+```{r, eval=FALSE}
+lmm.res(dvs = c("vo2.dv",
+                  "pcnt.vo2.dv",
+                  "hr.dv",
+                  "rpe.dv"), 
+          long.dataset = dat.econ.long, 
+          sav2csv = TRUE, 
+          sav2dir = c("results", "tables", "table4.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   lmm.res(dvs = c("vo2.dv",
+                  "pcnt.vo2.dv",
+                  "hr.dv",
+                  "rpe.dv"), 
+          long.dataset = dat.econ.long, 
+          sav2csv = TRUE, 
+          sav2dir = c("results", "tables", "table4.csv"), 
+              silent = TRUE)
+
+datatable(
+  m, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
+
+```
+
+## Table 5
+
+* Reproduce Table 5: Range of sample sizes required to estimate PSS-10 effects for a confirmatory RCT comparing aerobic exercise, mindfulness, combination training, and a control arm
+
+```{r, eval=FALSE}
+aipe.table(retention.rate = 0.71,
+             n.trial = 10, 
+             max.per.trial = 20, 
+             sav2csv = TRUE, 
+             sav2dir = c("results", "tables", "table5.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   aipe.table(retention.rate = 0.71,
+             n.trial = 10, 
+             max.per.trial = 20, 
+             sav2csv = TRUE, 
+             sav2dir = c("results", "tables", "table5.csv"))
+
+datatable(
+  m, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
+
+```
+
+<!----------------------------------------------------------------------------->
+<!-- In-text Figures --> 
+
+# In-text Figures
+
+## Figure 1
+
+* Figure 1 was produced in Adobe Illustrator
+* The data within this figure can be reproduced using the following function:
+
+```{r, eval=TRUE}
+feasibility(values = "flow")
+```
+
+## Figure 2A/2B
+
+* Reproduce Figure 2A and 2B (PSS-10 scores)
+
+```{r, out.width='100%',fig.height=5, eval = TRUE}
+pair.test(dv = "pss", long.dataset = dat.long, plots = TRUE, silent = TRUE)
+```
+
+## Figure 3A
+
+* Reproduce Figure 3A: Dot plots of aerobic economy data across velocity and time for absolute oxygen cost (VO2 L/min)
+
+```{r, out.width='100%',fig.height=5, eval = TRUE}
+emm.test(dv = "vo2.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
+```
+
+## Figure 3B
+
+* Reproduce Figure 3B: Dot plots of aerobic economy data across velocity and time for relative oxygen cost (% VO2max) 
+
+```{r, out.width='100%',fig.height=5, eval = TRUE}
+emm.test(dv = "pcnt.vo2.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
+```
+
+## Figure 3C
+
+* Reproduce Figure 3C: Dot plots of aerobic economy data across velocity and time for heart rate
+
+```{r, out.width='100%',fig.height=5, eval = TRUE}
+emm.test(dv = "hr.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
+```
+
+## Figure 3D
+
+* Reproduce Figure 3D: Dot plots of aerobic economy data across velocity and time for perceived exertion (RPE)
+
+```{r, out.width='100%',fig.height=5, eval = TRUE}
+emm.test(dv = "rpe.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
+```
+
+<!----------------------------------------------------------------------------->
+<!-- In-text Statistics --> 
+
+# In-text Statistics
+
+The following statistics are reported in the text of the main manuscript but outside of tables.
+
+## Critical _t_ and _d_ value for _N_ = 17
+
+* Reproduce calculation of the critical _t_ and _d_ values
+
+```{r, eval=TRUE}
+crit.vals(n = 17, type = "paired", alpha = 0.2)
+```
+
+## Common language effect size for PSS-10 gain scores
+
+* The common language effect size is computed with the following formula: `CL = 1 - pnorm(mu/sd.ch)`
+* It quantifies the chance that a participant picked at random at T1 will have a lower PSS-10 score compared to T0
+
+```{r, eval=TRUE}
+pair.test(dv = "pss", long.dataset = dat.long, plots = FALSE, silent = TRUE)$gain.res$cl.ES
+```
+
+## Sensitivity test for survivorship bias in PSS-10 gain score analyses
+
+* This test assigns a PSS-10 gain score of zero for seven participants and re-runs the paired test analysis on these gain scores
+
+```{r, eval=TRUE}
+pair.sensitivity(dv = "pss", dropout.n = 7, long.dataset = dat.long)
+```
+
+## Feasibility Rates
+* Reproduce the feasibility rates
+
+```{r, eval=TRUE, echo=TRUE}
+feasibility(values = "f.rates")
+```
+
+## Safeguard effect size
+* Reproduce the safeguard effect size computation for PSS-10 gain scores
+
+```{r, eval=TRUE, echo=TRUE}
+safeguard.es(dv = "pss", long.dataset = dat.long, type = "dz", silent = TRUE)$ci.LL_0.80
+```
+
+<!----------------------------------------------------------------------------->
+<!-- Sample Size Planning Analyses --> 
+
+# Sample Size Planning Analyses
+
+## Delta-z = -0.60
+
+```{r, eval = TRUE}
+aipe.d(d = -0.6, 
+       type = "dz",
+       conf.level = 0.95, 
+       assurance = 0.99, 
+       retention.rate = 0.71)
+```
+
+## Delta-z = -0.37
+
+```{r, eval = TRUE}
+aipe.d(d = -0.37, 
+     type = "dz",
+     conf.level = 0.95, 
+     assurance = 0.99, 
+     retention.rate = 0.71)
+```
+
+## Delta-s
+
+```{r, eval = TRUE}
+aipe.mult.d(dvals = seq(0.2, 0.8, 0.1), 
+            type = "ds", 
+            conf.level = 0.95, 
+            assurance = 0.99, 
+            return.order.d = "descending",
+            retention.rate = 0.71)
+```
+
+<!----------------------------------------------------------------------------->
+<!-- In-text Statistics --> 
+
+# Supplementary Results Tables
+
+## Table 1
+
+* Reproduce Supplementary Results Table 1: Summarized results for gains (T1-T0) at multiple confidence limits for psychosocial stress factors, mindfulness, emotion regulation factors, and maximal aerobic capacity
+
+```{r, eval=FALSE}
+pair.multiconf(dvs = c("pss",
+                       "sdass",
+                       "adass",
+                       "ddass",
+                       "who",
+                       "maas",
+                       "erq.cr",
+                       "rrs.br",
+                       "pswq",
+                       "vo2max"),
+               long.dataset = dat.long,
+               sav2csv = TRUE,
+               sav2dir = c("results", "tables", "supp_table1.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   pair.multiconf(dvs = c("pss",
+                         "sdass",
+                         "adass",
+                         "ddass",
+                         "who",
+                         "maas",
+                         "erq.cr",
+                         "rrs.br",
+                         "pswq",
+                         "vo2max"),
+                 long.dataset = dat.long,
+                 sav2csv = TRUE,
+                 sav2dir = c("results", "tables", "supp_table1.csv"), 
+                 silent = TRUE)
+
+datatable(
+  m, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
+
+```
+
+## Table 2
+
+* Reproduce Supplementary Results Table 2: Summarized results for follow-up pairwise contrast gains (T1-T0) at multiple confidence limits for the fixed effect of time (absolute oxygen cost, relative oxygen cost, heart rate, and perceived exertion) and interaction (relative oxygen cost)
+
+```{r, eval=FALSE}
+lmm.supp.res(dvs = c("vo2.dv",
+                       "pcnt.vo2.dv",
+                       "hr.dv",
+                       "rpe.dv"), 
+               long.dataset = dat.econ.long, 
+               sav2csv = TRUE, 
+               sav2dir = c("results", "tables", "supp_table2.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   lmm.supp.res(dvs = c("vo2.dv",
+                       "pcnt.vo2.dv",
+                       "hr.dv",
+                       "rpe.dv"), 
+               long.dataset = dat.econ.long, 
+               sav2csv = TRUE, 
+               sav2dir = c("results", "tables", "supp_table2.csv"), 
+               silent = TRUE)
+
+datatable(
+  m, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  )
+)
+
+```
+
+## Table 3
+
+* Reproduce Supplementary Results Table 3: Summarized results of the linear mixed model for absolute oxygen cost (Oc)
+
+```{r, eval=FALSE}
+supp.model(dv = "vo2.dv", 
+           long.dataset = dat.econ.long, 
+           sav2csv = TRUE, 
+           sav2dir = c("results", "tables", "supp_table3.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   supp.model(dv = "vo2.dv", 
+             long.dataset = dat.econ.long, 
+             sav2csv = TRUE, 
+             sav2dir = c("results", "tables", "supp_table3.csv"), 
+             silent = TRUE)
+
+datatable(
+  m$delete, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+  
+  datatable(
+  m$model, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+
+  datatable(
+  m$variance, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+
+```
+
+## Table 4
+
+* Reproduce Supplementary Results Table 4: Summarized results of the linear mixed model for relative oxygen cost (% VO2max).
+
+```{r, eval=FALSE}
+supp.model(dv = "pcnt.vo2.dv", 
+           long.dataset = dat.econ.long, 
+           sav2csv = TRUE, 
+           sav2dir = c("results", "tables", "supp_table4.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   supp.model(dv = "pcnt.vo2.dv", 
+         long.dataset = dat.econ.long, 
+         sav2csv = TRUE, 
+         sav2dir = c("results", "tables", "supp_table4.csv"), 
+         silent = TRUE)
+
+datatable(
+  m$delete, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+  
+  datatable(
+  m$model, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+
+  datatable(
+  m$variance, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+
+```
+
+## Table 5
+
+* Reproduce Supplementary Results Table 5: Summarized results of the linear mixed model for heart rate (beats/min)
+
+```{r, eval=FALSE}
+supp.model(dv = "hr.dv", 
+           long.dataset = dat.econ.long, 
+           sav2csv = TRUE, 
+           sav2dir = c("results", "tables", "supp_table5.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   supp.model(dv = "hr.dv", 
+           long.dataset = dat.econ.long, 
+           sav2csv = TRUE, 
+           sav2dir = c("results", "tables", "supp_table5.csv"),
+           silent = TRUE)
+
+datatable(
+  m$delete, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+  
+  datatable(
+  m$model, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+
+  datatable(
+  m$variance, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+
+```
+
+## Table 6
+
+* Reproduce Supplementary Results Table 6: Summarized results of the linear mixed model for perceived exertion (RPE)
+
+```{r, eval=FALSE}
+supp.model(dv = "rpe.dv", 
+           long.dataset = dat.econ.long, 
+           sav2csv = TRUE, 
+           sav2dir = c("results", "tables", "supp_table6.csv"))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Datatable code for tidy markdown table
+
+m =   supp.model(dv = "rpe.dv", 
+           long.dataset = dat.econ.long, 
+           sav2csv = TRUE, 
+           sav2dir = c("results", "tables", "supp_table6.csv"), 
+           silent = TRUE)
+
+datatable(
+  m$delete, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+  
+  datatable(
+  m$model, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+
+  datatable(
+  m$variance, extensions = 'FixedColumns',
+  options = list(
+    dom = 't',
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 2, rightColumns = 1)
+  ))
+```
+
+
+
+
+
+
