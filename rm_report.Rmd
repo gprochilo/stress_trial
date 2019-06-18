@@ -88,6 +88,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   )
 )
@@ -128,6 +129,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   )
 )
@@ -177,6 +179,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+    pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   )
 )
@@ -214,10 +217,10 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+    pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   )
 )
-
 ```
 
 ## Table 5
@@ -246,6 +249,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   )
 )
@@ -436,6 +440,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   )
 )
@@ -473,6 +478,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   )
 )
@@ -504,6 +510,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
   
@@ -512,6 +519,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 
@@ -520,6 +528,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 
@@ -550,6 +559,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
   
@@ -558,6 +568,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 
@@ -566,6 +577,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 
@@ -596,6 +608,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
   
@@ -604,6 +617,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 
@@ -612,6 +626,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 
@@ -642,6 +657,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
   
@@ -650,6 +666,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 
@@ -658,6 +675,7 @@ datatable(
   options = list(
     dom = 't',
     scrollX = TRUE,
+        pageLength = 50,
     fixedColumns = list(leftColumns = 2, rightColumns = 1)
   ))
 ```
