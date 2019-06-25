@@ -1458,7 +1458,7 @@ mixed.mod.res <- function(dvs,
   if(!is.null(covars)){
   
   res <- mapply(function(i,j){
-    mod = mixed.mod(dvs = i, covar = j, long.dataset = long.dataset, transf = transf, silent = TRUE)$anova
+    mod = mixed.mod(dv = i, covar = j, long.dataset = long.dataset, transf = transf, silent = TRUE)$anova
   }, dvs, covars, SIMPLIFY = FALSE)
   
   }

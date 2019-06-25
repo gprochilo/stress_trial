@@ -25,7 +25,7 @@ This R Markdown report reproduces the results found in the above manuscript.
 
 _Note_: data from the original publication are not publicly available on the advice of the Monash University Human Research Ethics Committee. This is because the approved ethics application did not include provisions for public access to data. The deidentified data are available from the corresponding author, upon a reasonable request. 
 
-_Note_: tables generated in this R Markdown report can be reproduced inside an R environment using the commands preceding each table. However, tables in this report have been formatted for presentation purposes using the datatable::datatable() function. See the raw R Markdown code in `rm_report.Rmd` for details.
+_Note_: tables generated in this R Markdown report can be reproduced inside an R environment using the commands preceding each table. However, tables in this report have been formatted for presentation purposes using the DT::datatable() function. See the raw R Markdown code in `rm_report.Rmd` for details.
 
 <!----------------------------------------------------------------------------->
 <!-- Prepare R Session --> 
@@ -50,7 +50,6 @@ source("Rallfun-v35.txt")
   * Sorting data into long and wide format
   * Defining variable classes
   * Removing data with incomplete cases for analysis of aerobic economy
-* This file also imports the results of an accuracy in parameter estimation sample size analysis which have been computed via simulation
 
 ```{r eval=TRUE}
 source("import_data.R")

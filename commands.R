@@ -72,7 +72,7 @@
   
   feasibility(values = "flow")
   
-  # Figure
+  # Figure 2
   
   # 2A/B
   pair.test(dv = "pss", long.dataset = dat.long, plots = TRUE, silent = TRUE)
@@ -82,13 +82,13 @@
   # A
   emm.test(dv = "vo2.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
   
-  #B
+  # B
   emm.test(dv = "pcnt.vo2.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
   
-  #C
+  # C
   emm.test(dv = "hr.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
   
-  #D
+  # D
   emm.test(dv = "rpe.dv", long.dataset = dat.econ.long, effect = "time", plots = TRUE, silent = TRUE)
   
 #-------------------------------------------------------------------------------
