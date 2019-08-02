@@ -3,7 +3,7 @@
 
 ## Research compendium for: The Effects of a 16-week Aerobic Exercise and Mindfulness-based Intervention on Chronic Psychosocial Stress: A Nonrandomized Pilot and Feasibility Trial.
 
-[![Last-changedate](https://img.shields.io/badge/last%20change-2019--06--25-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2019--08--02-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.5.1-brightgreen.svg)](https://cran.r-project.org/)
 
 * Compendium Author: [Guy A. Prochilo](http://www.guyprochilo.com)
@@ -49,17 +49,19 @@ _Note_: This analysis pipeline has not been tested on Mac OS or other Unix syste
 
 
 ```r
-install.packages("ggplot2")
-install.packages("MBESS")
-install.packages("scales")
-install.packages("HLMdiag")
-install.packages("userfriendlyscience")
-install.packages("lmerTest")
-install.packages("emmeans")
-install.packages("ggpubr")
-install.packages("here")
-install.packages("pwr")
-install.packages("DT")
+install.packages(c(
+  "ggplot2",
+  "MBESS",
+  "scales",
+  "HLMdiag",
+  "userfriendlyscience",
+  "lmerTest",
+  "emmeans",
+  "ggpubr",
+  "here",
+  "pwr",
+  "DT")
+)
 ```
 
 **5. Knit the R Markdown file:**

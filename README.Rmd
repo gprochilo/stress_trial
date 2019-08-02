@@ -54,17 +54,19 @@ _Note_: This analysis pipeline has not been tested on Mac OS or other Unix syste
 * This analysis requires the following packages:
 
 ```{r eval=FALSE}
-install.packages("ggplot2")
-install.packages("MBESS")
-install.packages("scales")
-install.packages("HLMdiag")
-install.packages("userfriendlyscience")
-install.packages("lmerTest")
-install.packages("emmeans")
-install.packages("ggpubr")
-install.packages("here")
-install.packages("pwr")
-install.packages("DT")
+install.packages(c(
+  "ggplot2",
+  "MBESS",
+  "scales",
+  "HLMdiag",
+  "userfriendlyscience",
+  "lmerTest",
+  "emmeans",
+  "ggpubr",
+  "here",
+  "pwr",
+  "DT")
+)
 ```
 
 **5. Knit the R Markdown file:**

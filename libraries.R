@@ -10,5 +10,4 @@ library(emmeans)
 library(ggpubr)
 library(here)
 library(pwr)
-library(devtools)
 library(DT) # for R Markdown tables
