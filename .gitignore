@@ -36,3 +36,15 @@ plots/pair_plots/*.eps
 .Rhistory
 .RData
 .Ruserdata
+
+# Ignore these files too
+01_main_manuscript.pdf
+01_main_manuscript.Rmd
+02_supplementary_materials.Rmd
+03_supplementary_results.Rmd
+*.docx
+*.aux
+*.log
+*.out
+*.tex
+Fig*

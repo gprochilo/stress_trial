@@ -20,7 +20,7 @@
 #     Name: Guy A. Prochilo
 #     Email: guy.prochilo@gmail.com
 # 
-#     Last update: June 2019
+#     Last update: October 2019
 #
 #     Cite as:
 #     Prochilo, G. A. (2019). ProcFun_stress-v1: R functions for stress trial 
@@ -291,10 +291,11 @@ crit.vals <- function(n,
     
     cat(res.d,"\n")
     cat(res.t,"\n\n")    
+    print(res.round)
     
   }
   
-  print(res.round)
+  
   
   return(
     invisible(list(d.crit = c("ci.LL" = ci[1], "d" = d.crit, "ci.UL" = ci[2]),
