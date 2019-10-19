@@ -10,7 +10,6 @@
 
 ## Documents
 - <a href="https://psyarxiv.com/8w45k" target="_blank">:page_facing_up: Manuscript Preprint (PsyArXiv)</a>
-<!-- - [:page_facing_up: Manuscript Preprint (PsyArXiv)](https://psyarxiv.com/8w45k) -->
 - [:page_facing_up: Supplementary Materials](/02_supplementary_materials.pdf)
 - [:page_facing_up: Supplementary Results](03_supplementary_results.pdf)
 - [:white_check_mark: CONSORT Checklist](/04_CONSORT_checklist.pdf)
