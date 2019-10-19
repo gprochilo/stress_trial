@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ## Documents
 
-- [:page_facing_up: Manuscript Preprint (PsyArXiv)](https://psyarxiv.com/)
+- [:page_facing_up: Manuscript Preprint (PsyArXiv)](https://psyarxiv.com/8w45k)
 - [:page_facing_up: Supplementary Materials](/02_supplementary_materials.pdf)
 - [:page_facing_up: Supplementary Results](03_supplementary_results.pdf)
 - [:white_check_mark: CONSORT Checklist](/04_CONSORT_checklist.pdf)
@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 - [:scroll: Script File](/ProcFun_stress-v1.R): R source code for reproducing all analyses
 - [:key: License](/LICENSE.txt): The scripts within this repository are free software provided under the terms of the GNU General Public License (v >= 3) unless otherwise specified. 
 
-*_Note_: This directory is empty. Data are not publicly available on the advice of the Monash University Human Research Ethics Committee. The deidentified data are available from the compendium author, upon a reasonable request. 
+*_Note_: This directory is empty. Data are not publicly available on the advice of the Monash University Human Research Ethics Committee. 
 
 ## R Markdown report
 
@@ -37,7 +37,7 @@ knitr::opts_chunk$set(
 
 ## Instructions for reproducing results
 
-*_Note_: Independent reproduction of results requires the data files that are not publicly available on the advice of the Monash University Human Research Ethics Committee. The deidentified data are available from the compendium author, upon a reasonable request.
+*_Note_: Independent reproduction of results requires the data files that are not publicly available on the advice of the Monash University Human Research Ethics Committee.
 
 **1. Check software dependencies:**
 

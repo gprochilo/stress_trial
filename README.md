@@ -3,14 +3,14 @@
 
 ## Research compendium for: The Effects of a 16-week Aerobic Exercise and Mindfulness-based Intervention on Chronic Psychosocial Stress: A Nonrandomized Pilot and Feasibility Trial.
 
-[![Last-changedate](https://img.shields.io/badge/last%20change-2019--10--16-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2019--10--19-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
 [![minimal R version](https://img.shields.io/badge/R%3E%3D-3.5.1-brightgreen.svg)](https://cran.r-project.org/)
 
 * Compendium Author: [Guy A. Prochilo](http://www.guyprochilo.com)
 
 ## Documents
 
-- [:page_facing_up: Manuscript Preprint (PsyArXiv)](https://psyarxiv.com/)
+- [:page_facing_up: Manuscript Preprint (PsyArXiv)](https://psyarxiv.com/8w45k)
 - [:page_facing_up: Supplementary Materials](/02_supplementary_materials.pdf)
 - [:page_facing_up: Supplementary Results](03_supplementary_results.pdf)
 - [:white_check_mark: CONSORT Checklist](/04_CONSORT_checklist.pdf)
@@ -23,7 +23,7 @@
 - [:scroll: Script File](/ProcFun_stress-v1.R): R source code for reproducing all analyses
 - [:key: License](/LICENSE.txt): The scripts within this repository are free software provided under the terms of the GNU General Public License (v >= 3) unless otherwise specified. 
 
-*_Note_: This directory is empty. Data are not publicly available on the advice of the Monash University Human Research Ethics Committee. The deidentified data are available from the compendium author, upon a reasonable request. 
+*_Note_: This directory is empty. Data are not publicly available on the advice of the Monash University Human Research Ethics Committee. 
 
 ## R Markdown report
 
@@ -31,7 +31,7 @@
 
 ## Instructions for reproducing results
 
-*_Note_: Independent reproduction of results requires the data files that are not publicly available on the advice of the Monash University Human Research Ethics Committee. The deidentified data are available from the compendium author, upon a reasonable request.
+*_Note_: Independent reproduction of results requires the data files that are not publicly available on the advice of the Monash University Human Research Ethics Committee.
 
 **1. Check software dependencies:**
 
