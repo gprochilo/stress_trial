@@ -48,3 +48,12 @@ plots/pair_plots/*.eps
 *.out
 *.tex
 Fig*
+
+# Latex output files
+
+*.aux
+*.fdb_latexmk
+*.fls
+*.lot
+*.out
+*.toc

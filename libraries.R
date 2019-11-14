@@ -11,3 +11,8 @@ library(ggpubr)
 library(here)
 library(pwr)
 library(DT) # for R Markdown tables
+library(tidyverse)
+library(broom)
+# Ensure `select` and `filter` are the `dplyr` functions`
+select <- dplyr::select
+filter <- dplyr::filter

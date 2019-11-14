@@ -323,3 +323,100 @@ mixed.assum.res(dvs = c("vo2.dv",
                 long.dataset = dat.econ.long, 
                 transf = "none")
 
+#-------------------------------------------------------------------------------
+
+# 2019 update - computation of d statistics for linear mixed model contrasts
+
+#-------------------------------------------------------------------------------
+
+# Compute Cohen's d for each main effect contrast for each linear mixed model
+# Note - these may take some time since the CI is computed via a bootstrap
+# simulation approach.
+
+# Absolute oxygen cost
+mixed.mod(dv = "vo2.dv",
+          long.dataset = dat.econ.long, 
+          transf = "none", 
+          silent = T)$model %>% 
+    gen_d(model = ., 
+        spec = ~time*samp, 
+        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
+        conf_int = c(0.80, 0.95), 
+        nsim = 2000, 
+        seed_val = 2)
+  
+
+# Relative oxygen cost
+mixed.mod(dv = "pcnt.vo2.dv",
+          long.dataset = dat.econ.long, 
+          transf = "none", 
+          silent = T)$model %>% 
+    gen_d(model = ., 
+        spec = ~time*samp, 
+        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
+        conf_int = c(0.80, 0.95), 
+        nsim = 2000, 
+        seed_val = 2)
+
+# Heart rate
+mixed.mod(dv = "hr.dv",
+          long.dataset = dat.econ.long, 
+          transf = "none", 
+          silent = T)$model %>% 
+    gen_d(model = ., 
+        spec = ~time*samp, 
+        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
+        conf_int = c(0.80, 0.95), 
+        nsim = 2000, 
+        seed_val = 2)
+
+# Perceived exertion
+mixed.mod(dv = "rpe.dv",
+          long.dataset = dat.econ.long, 
+          transf = "none", 
+          silent = T)$model %>% 
+    gen_d(model = ., 
+        spec = ~time*samp, 
+        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
+        conf_int = c(0.80, 0.95), 
+        nsim = 2000, 
+        seed_val = 2)
+
+# Call already-computed statistics that are saved in the `data` directory to avoid
+# need to run simulations
+
+# Absolute oxygen cost main effect
+read_csv(here::here("data", "d_statistics", "d_vo2.csv"), col_types = cols())
+
+# Relative oxygen cost main effect
+read_csv(here::here("data", "d_statistics", "d_pcnt_vo2.csv"), col_types = cols())
+
+# Heart rate main effect
+read_csv(here::here("data", "d_statistics", "d_hr.csv"), col_types = cols())
+
+# RPE main effect
+read_csv(here::here("data", "d_statistics", "d_rpe.csv"), col_types = cols())
+
+
+# Extract the d statistic results
+
+# Absolute oxygen cost main effect
+read_csv(here::here("data", "d_statistics", "d_vo2.csv"), col_types = cols()) %>% 
+  {sprintf("%s: %.2f [%.2f, %.2f]", .$conf_int, .$d, .$d_ci_LL, .$d_ci_UL)} %>% 
+  cbind()
+
+# Relative oxygen cost main effect
+read_csv(here::here("data", "d_statistics", "d_pcnt_vo2.csv"), col_types = cols()) %>% 
+  {sprintf("%s: %.2f [%.2f, %.2f]", .$conf_int, .$d, .$d_ci_LL, .$d_ci_UL)} %>% 
+  cbind()
+
+# Heart rate main effect
+read_csv(here::here("data", "d_statistics", "d_hr.csv"), col_types = cols()) %>% 
+  {sprintf("%s: %.2f [%.2f, %.2f]", .$conf_int, .$d, .$d_ci_LL, .$d_ci_UL)} %>% 
+  cbind()
+
+# RPE main effect
+read_csv(here::here("data", "d_statistics", "d_rpe.csv"), col_types = cols()) %>% 
+  {sprintf("%s: %.2f [%.2f, %.2f]", .$conf_int, .$d, .$d_ci_LL, .$d_ci_UL)} %>% 
+  cbind()
+

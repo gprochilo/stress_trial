@@ -20,7 +20,7 @@
 #     Name: Guy A. Prochilo
 #     Email: guy.prochilo@gmail.com
 # 
-#     Last update: October 2019
+#     Last update: November 2019
 #
 #     Cite as:
 #     Prochilo, G. A. (2019). ProcFun_stress-v1: R functions for stress trial 
@@ -2740,5 +2740,81 @@ aipe.table <- function(retention.rate = 0.71,
 }
   
 #-------------------------------------------------------------------------------
-# End script
+# End original scripts
 #-------------------------------------------------------------------------------
+
+# Compute Cohen's d for linear mixed model effects
+
+gen_d <- function(model, 
+                  spec, 
+                  con_vector, 
+                  conf_int = c(0.80, 0.95),
+                  nsim = 2000, 
+                  seed_val = 2, 
+                  print_warnings = TRUE){
+  
+  # Function for 'bootMer'
+  
+  boot_fun <- function(model, spec, con_vector) {
+    
+  emm = emmeans::emmeans(object = model, spec = spec)
+  
+  # Means
+  
+  emm %>% as_tibble() %>% .$emmean -> means
+  
+  # Variance components
+  
+  VarCorr(model) %>% as_tibble() %>% {sqrt(sum(.$vcov))} -> sd
+  
+  # Contrast vector
+  con = con_vector
+  
+  # Min and Max contrast values
+  
+  min_CON = min(con)
+  max_CON = max(con)
+  
+  # Compute denominator for Generalized Cohen's d
+  
+  d_den = sum(con^2) * sd
+  
+  # Compute the numerator for Generalized Cohen's d
+  
+  d_num = con %*% means %>% as.numeric() %>% {.*(max_CON - min_CON)}
+  
+  # Compute generalized Cohen's d
+  
+  d = d_num / d_den
+    
+    return(d)
+  }
+  
+  # Run lmer bootstrap on model to compute CI for d
+  
+  bootMer(x = model, 
+          FUN = function(x) boot_fun(model = x, 
+                                     spec = spec, 
+                                     con_vector = con_vector),
+          nsim = nsim, 
+          seed = seed_val) -> result
+  
+  # Extract data from `result`
+  
+  conf_int %>% 
+    map(., 
+        ~broom::tidy(result, 
+                     conf.int = TRUE, 
+                     conf.method = "perc", 
+                     conf.level = .)) %>% 
+    bind_rows() %>% 
+    `colnames<-`(c("d", "d_bias", "d_SE", "d_ci_LL", "d_ci_UL")) %>% 
+    bind_cols(conf_int = paste("ci", format(conf_int, nsmall = 2), sep = "_"),
+              .) -> d_ci
+  
+  if(print_warnings == TRUE){print(result)}
+  
+  return(d_ci)
+
+}
+
