@@ -71,7 +71,9 @@ install.packages(c(
   "ggpubr",
   "here",
   "pwr",
-  "DT")
+  "DT", 
+  "tidyverse", 
+  "broom")
 )
 ```
 

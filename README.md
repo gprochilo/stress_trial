@@ -3,8 +3,8 @@
 
 ## Research compendium for: The Effects of a 16-week Aerobic Exercise and Mindfulness-based Intervention on Chronic Psychosocial Stress: A Nonrandomized Pilot and Feasibility Trial.
 
-[![Last-changedate](https://img.shields.io/badge/last%20change-2019--10--19-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
-[![minimal R version](https://img.shields.io/badge/R%3E%3D-3.5.1-brightgreen.svg)](https://cran.r-project.org/)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2019--11--14-brightgreen.svg)](https://github.com/adamhsparks/rice.awd.pests/commits/master)
+[![minimal R version](https://img.shields.io/badge/R%3E%3D-3.6.1-brightgreen.svg)](https://cran.r-project.org/)
 
 * Compendium Author: [Guy A. Prochilo](http://www.guyprochilo.com)
 
@@ -66,7 +66,9 @@ install.packages(c(
   "ggpubr",
   "here",
   "pwr",
-  "DT")
+  "DT", 
+  "tidyverse", 
+  "broom")
 )
 ```
 
