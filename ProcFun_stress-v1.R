@@ -699,6 +699,7 @@ pair.test <- function(dv,
     dz = mu/sdev
     dav = mu/sdev.av
     cl.ES = 1 - pnorm(mu/sdev)
+    RNGkind(sample.kind = "Rounding")
     r.pval = trimpb(x = i-j, tr = 0.2, nboot = 2000, pr = FALSE)$p.value
     
     return(list(n = n, 
@@ -943,6 +944,7 @@ pair.sensitivity <- function(dv, dropout.n, long.dataset, silent = FALSE){
     df= as.numeric(test$parameter)
     pval = as.numeric(test$p.value)
     dz = mu/sdev
+    RNGkind(sample.kind = "Rounding") # get old set-seed result
     r.pval = trimpb(x = i, tr = 0.2, nboot = 2000, pr = FALSE)$p.value
     
     return(list(n = n, 
@@ -2481,6 +2483,7 @@ safeguard.es <- function(dv,
     dz = mu/sdev
     dav = mu/sdev.av
     cl.ES = 1 - pnorm(mu/sdev)
+    RNGkind(sample.kind = "Rounding") # get old set.seed result
     r.pval = trimpb(x = i-j, tr = 0.2, nboot = 2000, pr = FALSE)$p.value
     
     return(list(n = n, 
@@ -2743,7 +2746,396 @@ aipe.table <- function(retention.rate = 0.71,
 # End original scripts
 #-------------------------------------------------------------------------------
 
-# Compute Cohen's d for linear mixed model effects
+# Update of the `pair.test.table` function to report d_pre instead of d_av
+
+pair.test.table2 <- function(dvs, 
+                             long.dataset, 
+                             sav2csv = FALSE,
+                             sav2dir, 
+                             silent = FALSE){
+  
+  # This function performs the pair.test.res function for a vector of variable 
+  # name strings defined by dvs, and returns all analyses in an APA-like table.
+  # It does not generate plots.
+  #
+  # dvs: vector of dependent variable names as character strings
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Example use:
+  # Run pair.test for all of the following dvs stored in dat.long
+  # pair.test.table(dvs = c("pss",
+  #   "sdass",
+  #   "adass",
+  #   "ddass",
+  #   "who",
+  #   "maas",
+  #   "erq.cr",
+  #   "rrs.br",
+  #   "pswq",
+  #   "vo2max"), 
+  # long.dataset = dat.long, 
+  # sav2csv = TRUE, 
+  # sav2dir = c("results", "tables", "table3.csv"))
+  #
+  # Begin script
+  
+  # Define res as the result of pair.test.res
+  
+  res = 
+    pair.test.res(dvs = dvs, 
+                  long.dataset = long.dataset, 
+                  plots = FALSE, 
+                  sav2csv = FALSE, 
+                  silent = TRUE)
+  
+  # Compute d_pre and bca confidence interval with 2000 reps
+  
+  future::plan(multiprocess)
+  
+  test <- function(i){
+    
+    # Define data frame
+    
+    long.dataset %>% 
+      select(id, time, i) %>% 
+      pivot_wider(id_cols = id, names_from = time, values_from = i) %>% 
+      `colnames<-`(c("id", "t0", "t1")) -> df
+    
+    # Define bootstrap function to return d value using SD of pretest as standardizer
+    
+    boot_fun <- function(dat, i) {
+      
+      d = dat[i,]
+      
+      d %>% 
+        select(-id) %>%
+        psych::describe() -> descrip
+      
+      descrip %>% 
+        {(filter(.data = ., vars == 2) %>% .$mean - filter(.data = ., vars == 1) %>% .$mean) /
+            filter(.data = ., vars == 1) %>% .$sd} -> d
+      
+      return(d)
+      
+    }
+    
+    # Set seed for reproducibility
+    
+    RNGkind(sample.kind = "Rounding")
+    set.seed(2)
+    
+    # Run boot function with 2000 repetitions
+    
+    boot::boot(data = df, statistic = boot_fun, R = 2000) -> boot_res
+    
+    # Extract 80% and 85% CIs
+    
+    broom::tidy(boot_res, conf.int = TRUE, conf.method = "bca", conf.level = 0.80) %>% 
+      bind_cols(var = i, .) %>% 
+      `colnames<-`(c("var", "d_pre", "d_bias", "d_SE", "ci_LL_80", "ci_UL_80")) ->
+      d_ci
+    
+    broom::tidy(boot_res, conf.int = TRUE, conf.method = "bca", conf.level = 0.95) %>% 
+      select(conf.low, conf.high) %>% 
+      `colnames<-`(c("ci_LL_95", "ci_UL_95")) %>% 
+      bind_cols(d_ci, .) -> 
+      d_ci_return
+    
+    # Unused function to plot the bootstrap distributions
+    
+    # boot_res %>% 
+    #   .$t %>% 
+    #   as.data.frame() %>% 
+    #   ggplot(aes(x = V1)) + 
+    #   geom_histogram() +
+    #   geom_vline(xintercept = c(d_ci$d_ci_LL, d_ci$d_ci_UL), linetype = "dashed")
+    
+    return(d_ci_return)
+    
+  }
+  
+  # Run future_map function
+  
+  c("pss", 
+    "sdass", 
+    "adass", 
+    "ddass", 
+    "who",
+    "maas", 
+    "erq.cr", 
+    "rrs.br",
+    "pswq", 
+    "vo2max") %>% 
+    future_map_dfr(~test(i = .)) -> d_pre
+  
+  bind_cols(res, d_pre) %>% 
+    as_tibble() -> res
+  
+  # Format results into an APA-like table
+  
+  col1 = sprintf("%.2f (%.2f)", res$t0.res.mu, res$t0.res.sdev)
+  col2 = sprintf("%.2f (%.2f)", res$t1.res.mu, res$t1.res.sdev)
+  col3 = sprintf("%.2f (%.2f) [%.2f, %.2f]",
+                 res$gain.res.mu, 
+                 res$gain.res.sdev, 
+                 res$gain.ci.ci.LL.0.95,
+                 res$gain.ci.ci.UL.0.95)
+  col4 = sprintf("%.2f [%.2f, %.2f]", 
+                 res$d_pre, 
+                 res$ci_LL_95, 
+                 res$ci_UL_95)
+  col4.5 = sprintf("%.2f", res$gain.res.tval)
+  col5.temp = sprintf("%.3f", res$gain.res.pval)
+  col5 = substring(col5.temp, 2)
+  flag = col5 == ".000"
+  col5[flag] = "<.001"
+  col6.temp = sprintf("%.3f", res$gain.res.r.pval)
+  col6 = substring(col6.temp, 2)
+  flag = col6 == ".000"
+  col6[flag] = "<.001"
+  
+  temp1 = cbind(col1, col2, col3, col4, col4.5, col5, col6)
+  colnames(temp1) = c("T0: M (SD)",	"T1: M (SD)",	"Gain: M (SD) [95% CI]", "dpre [95% CI]", "t",	"p",	"pR")
+  rownames(temp1) = dvs
+  final = as.data.frame(temp1)
+  
+  if(sav2csv == TRUE){
+    
+    dv = rownames(final)
+    temp = cbind(dv, final)
+    rownames(temp) = NULL
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
+    
+    write.table(temp,
+                file = dir,
+                append = F,
+                row.names = F,
+                col.names = T,
+                sep=",")
+    
+  }
+  
+  if(silent == FALSE){
+    print(final)
+  }
+  
+  return(invisible(final))
+  
+}
+
+#-------------------------------------------------------------------------------
+
+# Update of the `pair.multiconf` function to report d_pre instead of d_av
+
+pair.multiconf2 <- function(dvs,
+                           long.dataset,
+                           sav2csv = FALSE,
+                           sav2dir,
+                           silent = FALSE){
+  
+  # This function performs the pair.test.res function for a vector of variable 
+  # name strings defined by dvs, and returns unstandardized effect sizes and
+  # standardized effect sizes with 80-95% confidence limits in an APA-like table.
+  #
+  # dvs: vector of dependent variable names as character strings
+  # long.dataset: data frame containing the variables in long format
+  # sav2csv: a logical indicating whether to save results to a csv file
+  # sav2dir: the directory location relative to the current directory. To save in
+  # the sub directory 'results' and sub-sub directory 'tables', set sav2dir as:
+  # c("results", "tables", "csvname.csv"), where 'csvname.csv' is the name of 
+  # the csv file that this function generates.
+  # silent: A logical indicating whether you want the function to return
+  # print output or suppress print output.
+  #
+  # Example use:
+  # Run pair.test.res for all of the following dvs stored in dat.long
+  # pair.multiconf(dvs = c("pss",
+  #                        "sdass",
+  #                        "adass",
+  #                        "ddass",
+  #                        "who",
+  #                        "maas",
+  #                        "erq.cr",
+  #                        "rrs.br",
+  #                        "pswq",
+  #                        "vo2max"),
+  #                long.dataset = dat.long,
+  #                sav2csv = TRUE,
+  #                sav2dir = c("results", "tables", "supp_table1.csv"))
+  #
+  # Begin scripts
+  
+  # Run the pair.test.res function for all variables in dvs and store as res
+  
+  res = 
+    pair.test.res(dvs = dvs, 
+                  long.dataset = long.dataset, 
+                  plots = FALSE, 
+                  sav2csv = FALSE, 
+                  silent = TRUE)
+  
+  # Compute d_pre and bca confidence interval with 2000 reps
+  
+  future::plan(multiprocess)
+  
+  test <- function(i){
+    
+    # Define data frame
+    
+    long.dataset %>% 
+      select(id, time, i) %>% 
+      pivot_wider(id_cols = id, names_from = time, values_from = i) %>% 
+      `colnames<-`(c("id", "t0", "t1")) -> df
+    
+    # Define bootstrap function to return d value using SD of pretest as standardizer
+    
+    boot_fun <- function(dat, i) {
+      
+      d = dat[i,]
+      
+      d %>% 
+        select(-id) %>%
+        psych::describe() -> descrip
+      
+      descrip %>% 
+        {(filter(.data = ., vars == 2) %>% .$mean - filter(.data = ., vars == 1) %>% .$mean) /
+            filter(.data = ., vars == 1) %>% .$sd} -> d
+      
+      return(d)
+      
+    }
+    
+    # Set seed for reproducibility
+    RNGkind(sample.kind = "Rounding")
+    set.seed(2)
+    
+    # Run boot function with 2000 repetitions
+    
+    boot::boot(data = df, statistic = boot_fun, R = 2000) -> boot_res
+    
+    # Extract 80% and 85% CIs
+    
+    broom::tidy(boot_res, conf.int = TRUE, conf.method = "bca", conf.level = 0.80) %>% 
+      bind_cols(var = i, .) %>% 
+      `colnames<-`(c("var", "d_pre", "d_bias", "d_SE", "ci_LL_80", "ci_UL_80")) ->
+      d_ci
+    
+    broom::tidy(boot_res, conf.int = TRUE, conf.method = "bca", conf.level = 0.95) %>% 
+      select(conf.low, conf.high) %>% 
+      `colnames<-`(c("ci_LL_95", "ci_UL_95")) %>% 
+      bind_cols(d_ci, .) -> 
+      d_ci_return
+    
+    # Unused function to plot the bootstrap distributions
+    
+    # boot_res %>% 
+    #   .$t %>% 
+    #   as.data.frame() %>% 
+    #   ggplot(aes(x = V1)) + 
+    #   geom_histogram() +
+    #   geom_vline(xintercept = c(d_ci$d_ci_LL, d_ci$d_ci_UL), linetype = "dashed")
+    
+    return(d_ci_return)
+    
+  }
+  
+  # Run future_map function
+  
+  c("pss", 
+    "sdass", 
+    "adass", 
+    "ddass", 
+    "who",
+    "maas", 
+    "erq.cr", 
+    "rrs.br",
+    "pswq", 
+    "vo2max") %>% 
+    future_map_dfr(~test(i = .)) -> d_pre
+  
+  cbind(res, d_pre) -> res
+  
+  # Create a list of lists for the following results
+  
+  res2 =
+    
+    lapply(X = dvs, FUN = function(i){
+      
+      x = res[i,]
+      
+      col1 = rbind(
+        sprintf("%.2f", x$gain.res.mu),
+        sprintf("%.2f", x$d_pre)
+      )
+      
+      col2 = rbind(
+        sprintf("[%.2f, %.2f]", x$gain.ci.ci.LL.0.80, x$gain.ci.ci.UL.0.80),
+        sprintf("[%.2f, %.2f]", x$ci_LL_80, x$ci_UL_80)
+      )
+      
+      col5 = rbind(
+        sprintf("[%.2f, %.2f]", x$gain.ci.ci.LL.0.95, x$gain.ci.ci.UL.0.95),
+        sprintf("[%.2f, %.2f]", x$ci_LL_95, x$ci_UL_95)
+      )
+      
+      p = sprintf("%.3f", x$gain.res.pval)
+      p = substring(p,2)
+      flag = p == ".000"
+      p[flag] = "<.001"
+      col6 = rbind(p,"")
+      
+      temp = cbind(col1, col2, col5, col6)
+      
+      colnames(temp) = c("Gain","80% CI",	"95% CI","p")
+      rownames(temp) = c(paste0(i,"_M"), paste0(i,"_d_pre"))
+      clean.res = as.data.frame(temp)
+      clean.res
+      
+    })
+  
+  # Strip list of lists and yield a list with 'do.call' then create a data frame
+  # using 'rbind'
+  
+  final = do.call(rbind, res2)
+  
+  # If sav2csv = TRUE we run the following scripts
+  
+  if(sav2csv == TRUE){
+    
+    dv = rownames(final)
+    temp = cbind(dv, final)
+    rownames(temp) = NULL
+    sav2dir = paste0(sav2dir, collapse = "/")
+    dir = paste(here::here(), sav2dir, sep = "/")
+    
+    write.table(temp,
+                file = dir,
+                append = F,
+                row.names = F,
+                col.names = T,
+                sep=",")
+    
+  }
+  
+  if(silent == FALSE){
+    print(final)
+  }
+  
+  return(invisible(final))
+  
+}
+
+#-------------------------------------------------------------------------------
+
+# Compute Cohen's d for linear mixed model effects - unused function
 
 gen_d <- function(model, 
                   spec, 

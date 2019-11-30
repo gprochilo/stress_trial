@@ -13,6 +13,7 @@ library(pwr)
 library(DT) # for R Markdown tables
 library(tidyverse)
 library(broom)
+library(furrr) # load furrr for multicore purrr mapping
 # Ensure `select` and `filter` are the `dplyr` functions`
 select <- dplyr::select
 filter <- dplyr::filter

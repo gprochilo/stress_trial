@@ -30,18 +30,18 @@
               sav2csv = TRUE, 
               sav2dir = c("results","tables","table2.csv"))
   
-  # Table 3
+  # Table 3 - updated to use pre-test SD as standardizer for d (November 2019)
   
-  pair.test.table(dvs = c("pss",
-                          "sdass",
-                          "adass",
-                          "ddass",
-                          "who",
-                          "maas",
-                          "erq.cr",
-                          "rrs.br",
-                          "pswq",
-                          "vo2max"), 
+  pair.test.table2(dvs = c("pss",
+                           "sdass",
+                           "adass",
+                           "ddass",
+                           "who",
+                           "maas",
+                           "erq.cr",
+                           "rrs.br",
+                           "pswq",
+                           "vo2max"), 
                   long.dataset = dat.long, 
                   sav2csv = TRUE, 
                   sav2dir = c("results", "tables", "table3.csv"))
@@ -148,18 +148,20 @@
 
   # Reproduce Supplementary Results tables
   
+    # Updated to compute d_pre (use `pair.multiconf()`` for d_av) (November 2019)
+  
   # Supp. results table 1
   
-  pair.multiconf(dvs = c("pss",
-                         "sdass",
-                         "adass",
-                         "ddass",
-                         "who",
-                         "maas",
-                         "erq.cr",
-                         "rrs.br",
-                         "pswq",
-                         "vo2max"),
+  pair.multiconf2(dvs = c("pss",
+                          "sdass",
+                          "adass",
+                          "ddass",
+                          "who",
+                          "maas",
+                          "erq.cr",
+                          "rrs.br",
+                          "pswq",
+                          "vo2max"),
                  long.dataset = dat.long,
                  sav2csv = TRUE,
                  sav2dir = c("results", "tables", "supp_table1.csv"))
@@ -209,6 +211,9 @@
 #-------------------------------------------------------------------------------
 
 # Comprehensive results of 1-df effects
+  
+  # Note: these functions have not been update to report d_pre
+  # Instead, they report d_av (using average sd as standardizer)
 
 # Individually: replace "pss" with any variable in 'dat.long'
 pair.test(dv = "pss", long.dataset = dat.long, plots = TRUE)
