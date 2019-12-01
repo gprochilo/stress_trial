@@ -13,6 +13,7 @@
 - [:page_facing_up: Supplementary Materials](/02_supplementary_materials.pdf)
 - [:page_facing_up: Supplementary Results](03_supplementary_results.pdf)
 - [:white_check_mark: CONSORT Checklist](/04_CONSORT_checklist.pdf)
+- [:white_check_mark: R Markdown Report of Reproducible Analysis Pipeline](http://gprochilo.github.io/stress_trial)
 
 ## Data and Analysis
 
@@ -24,13 +25,9 @@
 
 *_Note_: This directory is empty. Data are not publicly available on the advice of the Monash University Human Research Ethics Committee. 
 
-## R Markdown report
+## Instructions for independently reproducing results
 
-- [:earth_asia: Report](http://gprochilo.github.io/stress_trial): An R Markdown report that contains the results of all analyses performed in the manuscript.
-
-## Instructions for reproducing results
-
-*_Note_: Independent reproduction of results requires the data files that are not publicly available on the advice of the Monash University Human Research Ethics Committee.
+*_Note_: Independent reproduction of results requires the data files that are not publicly available on the advice of the Monash University Human Research Ethics Committee. These are available from the corresponding author upon a reasonable request.
 
 **1. Check software dependencies:**
 
