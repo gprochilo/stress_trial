@@ -142,7 +142,7 @@ datatable(
 * Reproduce Table 3: Summarized results for pre-test (T0), post-test (T1), and gains (T1-T0) for psychosocial stress factors, mindfulness, emotion regulation factors, and maximal aerobic capacity
 
 ```{r, eval=FALSE}
-pair.test.table(dvs = c("pss",
+pair.test.table2(dvs = c("pss",
                           "sdass",
                           "adass",
                           "ddass",
@@ -160,7 +160,7 @@ pair.test.table(dvs = c("pss",
 ```{r, eval=TRUE, echo=FALSE}
 # Datatable code for tidy markdown table
 
-m =   pair.test.table(dvs = c("pss",
+m =   pair.test.table2(dvs = c("pss",
                           "sdass",
                           "adass",
                           "ddass",
@@ -403,7 +403,7 @@ aipe.mult.d(dvals = seq(0.2, 0.8, 0.1),
 * Reproduce Supplementary Results Table 1: Summarized results for gains (T1-T0) at multiple confidence limits for psychosocial stress factors, mindfulness, emotion regulation factors, and maximal aerobic capacity
 
 ```{r, eval=FALSE}
-pair.multiconf(dvs = c("pss",
+pair.multiconf2(dvs = c("pss",
                        "sdass",
                        "adass",
                        "ddass",
@@ -421,7 +421,7 @@ pair.multiconf(dvs = c("pss",
 ```{r, eval=TRUE, echo=FALSE}
 # Datatable code for tidy markdown table
 
-m =   pair.multiconf(dvs = c("pss",
+m =   pair.multiconf2(dvs = c("pss",
                          "sdass",
                          "adass",
                          "ddass",
@@ -683,91 +683,91 @@ datatable(
 
 --- 
 
-# Generalized Cohen's *d* for main effect contrasts for each linear mixed model
+<!-- # Generalized Cohen's *d* for main effect contrasts for each linear mixed model -->
 
-*Note:* These values can be reproduced using the first code chunk in each sub-heading below. However, because the 95% CI on each *d* is computed using a simulation approach (which takes substantial time), the results reproduced here are the saved output of the first code chunk that have been stored in CSV files. 
+<!-- *Note:* These values can be reproduced using the first code chunk in each sub-heading below. However, because the 95% CI on each *d* is computed using a simulation approach (which takes substantial time), the results reproduced here are the saved output of the first code chunk that have been stored in CSV files.  -->
 
-## Absolute Oxygen Cost Main Effect
+<!-- ## Absolute Oxygen Cost Main Effect -->
 
-```{r, eval = F, echo = T}
-# Note: not evaluated
-mixed.mod(dv = "vo2.dv",
-          long.dataset = dat.econ.long, 
-          transf = "none", 
-          silent = T)$model %>% 
-    gen_d(model = ., 
-        spec = ~time*samp, 
-        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
-        conf_int = c(0.80, 0.95), 
-        nsim = 2000, 
-        seed_val = 2)
-```
+<!-- ```{r, eval = F, echo = T} -->
+<!-- # Note: not evaluated -->
+<!-- mixed.mod(dv = "vo2.dv", -->
+<!--           long.dataset = dat.econ.long,  -->
+<!--           transf = "none",  -->
+<!--           silent = T)$model %>%  -->
+<!--     gen_d(model = .,  -->
+<!--         spec = ~time*samp,  -->
+<!--         con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4), -->
+<!--         conf_int = c(0.80, 0.95),  -->
+<!--         nsim = 2000,  -->
+<!--         seed_val = 2) -->
+<!-- ``` -->
 
-```{r, eval = TRUE, echo= TRUE}
-# Note: evaluated
-read_csv(here::here("data", "d_statistics", "d_vo2.csv"), col_types = cols())
-```
+<!-- ```{r, eval = TRUE, echo= TRUE} -->
+<!-- # Note: evaluated -->
+<!-- read_csv(here::here("data", "d_statistics", "d_vo2.csv"), col_types = cols()) -->
+<!-- ``` -->
 
-## Relative Oxygen Cost Main Effect
+<!-- ## Relative Oxygen Cost Main Effect -->
 
-```{r, echo = T, eval = F}
-# Note: not evaluated
-mixed.mod(dv = "pcnt.vo2.dv",
-          long.dataset = dat.econ.long, 
-          transf = "none", 
-          silent = T)$model %>% 
-    gen_d(model = ., 
-        spec = ~time*samp, 
-        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
-        conf_int = c(0.80, 0.95), 
-        nsim = 2000, 
-        seed_val = 2)
-```
+<!-- ```{r, echo = T, eval = F} -->
+<!-- # Note: not evaluated -->
+<!-- mixed.mod(dv = "pcnt.vo2.dv", -->
+<!--           long.dataset = dat.econ.long,  -->
+<!--           transf = "none",  -->
+<!--           silent = T)$model %>%  -->
+<!--     gen_d(model = .,  -->
+<!--         spec = ~time*samp,  -->
+<!--         con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4), -->
+<!--         conf_int = c(0.80, 0.95),  -->
+<!--         nsim = 2000,  -->
+<!--         seed_val = 2) -->
+<!-- ``` -->
 
-```{r, echo = T, eval = T}
-# Note: evaluated
-read_csv(here::here("data", "d_statistics", "d_pcnt_vo2.csv"), col_types = cols())
-```
+<!-- ```{r, echo = T, eval = T} -->
+<!-- # Note: evaluated -->
+<!-- read_csv(here::here("data", "d_statistics", "d_pcnt_vo2.csv"), col_types = cols()) -->
+<!-- ``` -->
 
-## Heart Rate Main Effect
+<!-- ## Heart Rate Main Effect -->
 
-```{r, echo = T, eval = F}
-# Note: not evaluated
-mixed.mod(dv = "hr.dv",
-          long.dataset = dat.econ.long, 
-          transf = "none", 
-          silent = T)$model %>% 
-    gen_d(model = ., 
-        spec = ~time*samp, 
-        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
-        conf_int = c(0.80, 0.95), 
-        nsim = 2000, 
-        seed_val = 2)
-```
+<!-- ```{r, echo = T, eval = F} -->
+<!-- # Note: not evaluated -->
+<!-- mixed.mod(dv = "hr.dv", -->
+<!--           long.dataset = dat.econ.long,  -->
+<!--           transf = "none",  -->
+<!--           silent = T)$model %>%  -->
+<!--     gen_d(model = .,  -->
+<!--         spec = ~time*samp,  -->
+<!--         con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4), -->
+<!--         conf_int = c(0.80, 0.95),  -->
+<!--         nsim = 2000,  -->
+<!--         seed_val = 2) -->
+<!-- ``` -->
 
-```{r, echo = T, eval = T}
-# Note: evaluated
-read_csv(here::here("data", "d_statistics", "d_hr.csv"), col_types = cols())
-```
+<!-- ```{r, echo = T, eval = T} -->
+<!-- # Note: evaluated -->
+<!-- read_csv(here::here("data", "d_statistics", "d_hr.csv"), col_types = cols()) -->
+<!-- ``` -->
 
-## Perceived Exertion Main Effect
+<!-- ## Perceived Exertion Main Effect -->
 
-```{r, echo = T, eval = F}
-# Note: not evaluated
-mixed.mod(dv = "rpe.dv",
-          long.dataset = dat.econ.long, 
-          transf = "none", 
-          silent = T)$model %>% 
-    gen_d(model = ., 
-        spec = ~time*samp, 
-        con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4),
-        conf_int = c(0.80, 0.95), 
-        nsim = 2000, 
-        seed_val = 2)
-```
+<!-- ```{r, echo = T, eval = F} -->
+<!-- # Note: not evaluated -->
+<!-- mixed.mod(dv = "rpe.dv", -->
+<!--           long.dataset = dat.econ.long,  -->
+<!--           transf = "none",  -->
+<!--           silent = T)$model %>%  -->
+<!--     gen_d(model = .,  -->
+<!--         spec = ~time*samp,  -->
+<!--         con_vector = c(-1/4, 1/4, -1/4, 1/4, -1/4, 1/4, -1/4, 1/4), -->
+<!--         conf_int = c(0.80, 0.95),  -->
+<!--         nsim = 2000,  -->
+<!--         seed_val = 2) -->
+<!-- ``` -->
 
-```{r, echo = T, eval = T}
-# Note: evaluated
-read_csv(here::here("data", "d_statistics", "d_rpe.csv"), col_types = cols())
-```
+<!-- ```{r, echo = T, eval = T} -->
+<!-- # Note: evaluated -->
+<!-- read_csv(here::here("data", "d_statistics", "d_rpe.csv"), col_types = cols()) -->
+<!-- ``` -->
 

@@ -3134,6 +3134,8 @@ pair.multiconf2 <- function(dvs,
 }
 
 #-------------------------------------------------------------------------------
+# Unused functions
+#-------------------------------------------------------------------------------
 
 # Compute Cohen's d for linear mixed model effects - unused function
 

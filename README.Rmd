@@ -73,7 +73,8 @@ install.packages(c(
   "pwr",
   "DT", 
   "tidyverse", 
-  "broom")
+  "broom", 
+  "furrr"))
 )
 ```
 
@@ -81,8 +82,9 @@ install.packages(c(
 
 * Open `rm_report.Rmd` in R Studio and select **Knit**
 * This action will reproduce all reported analyses
+* *Note*: Knitting this document may take 3 -- 5 minutes due to the bootstrap analyses used in this analysis pipeline
 
-**_Optional_: Run analyses from the `commands.R` script file**
+**_Optional_: Run analyses individually from the `commands.R` script file**
 
 * Open `commands.R` in R Studio
 * Run the following commands to prepare the R session
